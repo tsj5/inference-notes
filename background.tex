@@ -1,0 +1,1135 @@
+% !TEX TS-program = latexmk
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\RequirePackage{amsmath} % partial fix for ``cannot redefine operator''
+
+\documentclass[notitlepage,openany,11pt]{report}
+%\documentclass[11pt,oneside]{amsart}
+\usepackage[pdftex,letterpaper,
+total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
+\usepackage[pdftex]{graphicx}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel} % hyphenation etc.
+\usepackage{csquotes}%
+\usepackage{newtxtext,newtxmath}
+% \usepackage{times} % times font for text, not equations
+\usepackage{microtype} % kerning
+
+\usepackage[square,numbers,sort&compress]{natbib} % ,merge,elide
+
+
+\let\Bbbk\relax
+\let\openbox\relax
+%\usepackage{amsmath} % math
+\usepackage{amsfonts,amssymb,amsthm}
+\usepackage{bm}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\cov}{cov}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{sectsty} % reduce font size for chapter headers
+\chapterfont{\LARGE}
+\chapternumberfont{\LARGE}
+\chaptertitlefont{\LARGE}
+\sectionfont{\Large}
+\subsectionfont{\large}
+\subsubsectionfont{\normalsize}
+\usepackage[titles]{tocloft}
+\renewcommand{\cftchapfont}{\normalfont\bfseries}% titles in bold
+\renewcommand{\cftsecfont}{\normalfont\bfseries}% titles in bold
+\renewcommand{\cftsecpagefont}{\normalfont\bfseries}% page numbers in bold
+% \renewcommand{\cftdotsep}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{adjmulticol} % 2-col for biblio
+\usepackage{indentfirst}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\definecolor{darkred}{rgb}{0.45,0.,0.}
+\definecolor{darkgreen}{rgb}{0.,0.45,0.}
+\definecolor{darkblue}{rgb}{0.,0.,0.5}
+\usepackage{framed}
+
+\usepackage[hyphens,obeyspaces]{url}
+\usepackage[%
+    breaklinks,colorlinks=true,
+    linkcolor=darkred,citecolor=darkgreen,urlcolor=darkblue,
+    backref=page
+]{hyperref}
+% \hypersetup{backref=page} % needs to be specified post-load?
+\usepackage{hypernat} % after hyperref and natbib
+%\PassOptionsToPackage{hyphens,obeyspaces}{url}
+\usepackage{doi} % needs to be after hyperref and url?
+\usepackage{marginnote}
+\renewcommand*{\marginfont}{\footnotesize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Number subsubsections for references, but don't put them in the TOC
+\setcounter{secnumdepth}{3} 
+\setcounter{tocdepth}{2}
+ 
+% Number subsubsections for references, but don't put them in the TOC
+% don't number chapters in order to keep TOC, text refs manageable
+\newcommand{\nonumberchapter}[1]{%
+    %\setcounter{section}{0}
+    \chapter*{#1}
+    \vspace{-20pt}
+    \addcontentsline{toc}{chapter}{#1}
+}
+\renewcommand{\thesection}{\arabic{section}}
+\newcommand{\nonumbersection}[1]{%
+    \setcounter{subsection}{0}
+    \section*{#1}
+    \addcontentsline{toc}{section}{#1}
+}
+\numberwithin{equation}{section}
+
+% put TOC on title page, 
+% https://tex.stackexchange.com/questions/45861/toc-on-the-title-page-in-a-report
+\makeatletter
+\newcommand*{\toccontents}{\@starttoc{toc}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Eliminate ``References'' header from \bibliography since
+% we put that in manually, because we want it in TOC
+\renewcommand{\bibsection}{}
+
+% Don't complain about exported language=en tags in biblio
+% https://tex.stackexchange.com/a/199299
+\makeatletter
+\let\ORIbbl@fixname\bbl@fixname
+\def\bbl@fixname#1{%
+    \@ifundefined{languagealias@\expandafter\string#1}
+        {\ORIbbl@fixname#1}
+        {\edef\languagename{\@nameuse{languagealias@#1}}}%
+}
+\newcommand{\definelanguagealias}[2]{%
+    \@namedef{languagealias@#1}{#2}%
+}
+\makeatother
+\definelanguagealias{en}{english}
+\definelanguagealias{en-US}{english}
+
+% patch backref option to link to line of citation
+% must be applied after hyperref loaded w/appropriate backref option
+% ``merge'' option for natbib still broken, though.
+% From https://tex.stackexchange.com/a/67852, see there for comments
+
+% If there are multiple cites on the same page, should we show only the
+% first one or should we show them all?
+\newif\ifbackrefshowonlyfirst
+\backrefshowonlyfirsttrue % or false
+
+\makeatletter
+\let\BR@direct@old@hyper@natlinkstart\hyper@natlinkstart
+\renewcommand*{\hyper@natlinkstart}{\phantomsection\BR@direct@old@hyper@natlinkstart}%
+\let\BR@direct@oldBR@citex\BR@citex
+\renewcommand*{\BR@citex}{\phantomsection\BR@direct@oldBR@citex}%
+
+\long\def\hyper@page@BR@direct@ref#1#2#3{\hyperlink{#3}{#1}}
+
+\ifx\backrefxxx\hyper@page@backref
+    \let\backrefxxx\hyper@page@BR@direct@ref
+    \ifbackrefshowonlyfirst
+        %\let\backrefxxxdupe\hyper@page@backref%
+        \newcommand*{\backrefxxxdupe}[3]{#1}%
+    \fi
+\else
+    \ifbackrefshowonlyfirst
+        \newcommand*{\backrefxxxdupe}[3]{#2}%
+    \fi
+\fi
+\RequirePackage{etoolbox}
+\patchcmd{\Hy@backout}{Doc-Start}{\@currentHref}{}{\errmessage{I can't patch backref}}
+\makeatother
+
+% Add text to bibitem explaining what backrefs are doing
+% from https://tex.stackexchange.com/a/397886
+\renewcommand\backreftwosep{, }
+\renewcommand\backrefsep{, }
+\renewcommand*{\backrefalt}[4]{%
+    \ifcase #1%
+        \or Cited on~p.~#2.%
+        \else Cited on~pp.~#2.%
+    \fi%
+}
+
+% Draw box around projects
+\theoremstyle{plain}% default
+\newtheorem{notethm}{Note}
+\newenvironment{notebox}
+    {\noindent\colorlet{shadecolor}{cyan!15}\begin{shaded}\begin{notethm}}
+    {\end{notethm}\end{shaded}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\newcommand {\be}{\begin{equation*}}
+\newcommand {\ee} {\end{equation*}}
+\newcommand{\boldref}[1]{\textbf{\ref{#1}}}
+\newcommand{\boldnameref}[1]{\textbf{\nameref{#1}}}
+
+\newcommand{\mbf}[1]{\mathbf{#1}}
+\newcommand{\mbb}[1]{\mathbb{#1}}
+\newcommand{\mcal}[1]{\mathcal{#1}}
+\newcommand{\mtilde}[1]{\widetilde{#1}}
+\newcommand{\mhat}[1]{\widehat{#1}}
+\newcommand{\mol}[1]{\overline{#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Background on machine learning, inference and control}
+\author{Tom Jackson}
+%\email[]{Your e-mail address}
+%\affiliation{}
+
+\hypersetup{pageanchor=false} % fix hyperref error: https://tex.stackexchange.com/a/331766
+
+%\begin{titlepage}
+\newgeometry{total={5.75in, 9in}} % https://stackoverflow.com/questions/1670463
+\maketitle
+
+\begin{abstract}
+This is a (disorganized) summary writeup on with pointers to literature I've compiled for my own use.\end{abstract}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{arabic}
+
+%\addtocontents{toc}{\vspace{-10pt}}
+%\tableofcontents
+\toccontents
+
+\restoregeometry
+
+%\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Probability}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Gaussians}
+
+\subsection{Gaussian integrals}
+\be
+\int \! dx \, e^{-x^{2}} = \sqrt{\pi}.
+\ee
+Gaussian integral via completing the square:
+\be
+\int \! d^{d}\mbf{x} \, \exp \left[ - \tfrac{1}{2} \mbf{x}^{T} \mbf{A} \mbf{x} + \mbf{Jx} \right] = \sqrt{\frac{(2 \pi)^{d}}{\det \mbf{A}}} \exp \left[ - \tfrac{1}{2} \mbf{J}^{T} \mbf{A}^{-1} \mbf{J} \right].
+\ee
+
+
+\subsection{Normal distributions}
+
+Ref: \href{https://en.wikipedia.org/wiki/Multivariate_normal_distribution}{wiki}.
+
+Denote $X \sim \mcal{N}(\mbf{\mu}, \mbf{\Sigma})$ for a normally distributed random variable $X$:
+\be
+p(X= \mbf{x}) = \frac{1}{\sqrt{(2 \pi)^{d} \det \mbf{\Sigma}}} \exp \left[ - \tfrac{1}{2} (\mbf{x}- \mbf{\mu})^{T} \mbf{\Sigma}^{-1} (\mbf{x} - \mbf{\mu}) \right],
+\ee
+with $\mbf{\Sigma}$ positive definite. 
+
+If $X \sim \mcal{N}(\mbf{\mu}, \mbf{\Sigma})$, an affine transformation $Y = \mbf{H}X + \mbf{c}$ is distributed as $Y \sim \mcal{N}(\mbf{H\mu} + \mbf{c}, \mbf{H\Sigma H}^{T})$. Implies marginal distribution just drops relevant entries from $\mbf{\mu}, \mbf{\Sigma}$. 
+
+Note that if $X_1, X_2$ are normal, their joint distribution need not be, even if they're uncorrelated [$\cov(X_1, X_2) = 0$]. 
+
+Conditioning a Gaussian: Take $X_1, X_2$ joint normal, with $\mbf{\Sigma}$ having a $2 \times 2$ block structure. Conditional distribution $p(X_1 | X_2 = \mbf{x}_2) = p(X_1, X_2)/ p(X_2)$ can be read off using the \href{https://en.wikipedia.org/wiki/Schur_complement}{Schur identity}
+\be
+\begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\ \Sigma_{21} & \Sigma_{22} \end{bmatrix}^{-1} = \begin{bmatrix} S & -S \Sigma_{12} \Sigma_{22}^{-1}  \\ - \Sigma_{22}^{-1} \Sigma_{21} S & \Sigma_{22}^{-1} + \Sigma_{22}^{-1} \Sigma_{21} S \Sigma_{12} \Sigma_{22}^{-1} \end{bmatrix}
+\ee
+with
+\be
+S \equiv \left( \Sigma_{11} - \Sigma_{12} \Sigma_{22}^{-1} \Sigma_{21} \right)^{-1}.
+\ee
+Marginal $1/p(X_2)$ only cancels constant term. Reading off new mean and covariance from linear and quadratic $X_1$ dependence, we get
+\be
+X_1 | X_2 = \mbf{x}_2 \sim \mcal{N} \left( \mbf{\mu}_{1} + \Sigma_{12} \Sigma_{22}^{-1} (\mbf{x}_{2} - \mbf{\mu}_2), S^{-1} \right).
+\ee
+Note that conditioning on $X_2$ shifts the mean for $X_1$, which wouldn't have happened if we just took the marginal $p(X_1)$.
+
+
+\section{Probabilistic graphical models}
+
+\subsection{Markov chains.} 
+Generic model of a memoryless process. Take a discretized state space $S \in \mcal{S}$ in discrete time and describe stochastic time evolution through matrix of conditional transition probabilities
+\be
+T_{ij} = \text{Pr}(S_{t+1} = s_{i} | S_{t} = s_{j}).
+\ee
+($S_{t+1}, S_{t}...$ are discrete random variables, while $s_{i}, s_{j}$ label state space elements.)
+\marginnote{Is there a model of chaotic dynamics that's discrete in both space and time? Possible to define attractor for cellular automata?}
+
+$T$ is a ``right stochastic matrix'': all entries are non-negative and rows sum to 1. (continuous version: kernel; volume preserving diffeos). Stationary distributions $\pi$ are left eigenvectors: $\pi T = \pi$. \emph{If} $T$ is irreducible (one connected component) and aperiodic (aka \emph{ergodic}), stationary distribution is unique Perron-Frobenius eignevector of eigenvalue $1$.
+
+Detailed balance condition (aka ``reversibility'') is that there exists a $\pi$ such that:
+\be
+\pi_{i} T_{ij} = \pi_{j} T_{ji}.
+\ee
+If $\pi$ exists, it's a steady-state distribution. For any $T$, $\pi$ and matrix norm, can find a reversible $T^{\ast}$ closest to $T$ preserving $\pi$ through quadratic convex optimization. Doubly-stochastic matrices have a neat combinatorical description (Birkhoff polytope).
+
+
+
+\subsection{Hidden Markov models.} 
+\label{sec-hidden-markov-models}
+
+Add unobserved, discrete latent variables (observed variables may be discrete or continuous.)
+
+\subsubsection{Graphical models.} Depiction of the factorization of a general distribution. Graph nodes are individual random variables (or components), with an arrow $v \to v'$ if the distribution factorizes as $p(S_{v'} | \cdots, S_{v}, \cdots)$. Markov chain is just a linear chain, while hidden Markov model has a comb structure: latent variables $\{Z_{t} \}$ by themselves are a Markov chain, while observable $S_{t}$ depends on latent $z_{t}$ at that time only. When limited to observables, $S_{t}$ is not conditionally independent of any other $S$ in its past.
+
+At fixed $t$, can view as a mixture of distribution model (with mixture components labeled by values of $z_{t-1}$. Can view as an example of independent component analysis (with the hidden variables labeling the components.) 
+
+
+
+[...]
+
+
+\subsection{Markov Decision Processes} 
+
+\subsubsection{Terminology} Pick up from discussion of Markov chains; remain in discrete setting. Augment state with choice of action $A_{t}$ taken at time $t$, and reward $R_{t}$. Transition probability now takes the form $T(s_{+}, r | s, a)$, where we abbreviate $s_{+} = s_{t+1}$; note that this form allows for stochasticity in actions and rewards, since deterministic case is a special case of this. Can show that optimal policy for an MDP where everything is known is always deterministic, but stochastic policies can be optimal for POMDPs. 
+
+Also retain critical feature that $s_{+}$ ``depends only on $s$,'' \marginnote{Martingale? Is this what's meant by a ``separator''?} which is reflected in ansatz for stochastic policy function $\pi(a|s)$ --- in particular, $A$ isn't merely enlarging state space. Stated problem is to select $\pi$ to maximize discounted total reward $\sum_{t} \gamma^{t} R(s_{t}, a_{t})$. At this point we only introduce discounting factor $0 < \gamma < 1$ for convergence's sake.
+
+Note this is a bit orthogonal to traditional ML: ``semi-supervised'' learning in that we learn reward, but it's up to the agent to determine how to relate that to policy. Also learning problems in general either omit feedback (offline) or tend to leave it implicit in the online case.
+
+\section{Monte Carlo} 
+
+\subsection{Intro} Ref: \cite{MacKay:03} ch. 29.
+
+Recall that Monte Carlo integration, at its simplest, estimates a high-dimensional integral by randomly sampling positions in the domain of integration \marginnote{Or quasi-randomly sampling; see low-discrepancy sequences.} and taking the average of values of the integrand evaluated at those points. This is wasteful if we draw lots of samples from areas where the integrand is small.
+
+A special case of integration is computing expectation values of arbitrary quantities $f$ with respect to a high-dimensional distribution $P$, $\langle f \rangle = \int \! P(x) d^{d} x \, f(x)$. This is related to the problem of simply generating samples from $P$, because if we can do that we can estimate  $\langle f \rangle$ by evaluating $f$ there. 
+
+An essential point of MC is that the error in doing so goes as $\var(f) / N$, and is \emph{independent} of the dimensionality $d$ of $x$. 
+
+\subsubsection{Importance sampling} 
+If we have an approximation $Q(x)$ to $P(x)$ that's cheaper to evaluate, we can simply draw samples from $Q$ and weight them according to $w_{i} = P(x_{i}) / Q(x_{i})$. Problems are 1) this is essentially uncontrolled without some guarantee on how close $Q$ is to $P$, and 2) suffers in high dimensions: weights become dominated by large values.
+
+\subsubsection{Rejection sampling} 
+Similar, but now assume we know a constant $c$ such that $cQ(x) > P(x)$ for all $x$. For each sample, generate a uniform variate $u_{i}$ from $0$ to $cQ(x_{i})$ and only keep the sample if $u_{i} < P(x)$. Retained samples are independent from P(x). Problem is finding $c$ so that rejection isn't too frequent, also harder in high dimensions.
+
+\subsection{Markov chain Monte Carlo} 
+Ref: \cite{MacKay:03} ch. 29.
+
+Coming up with a single approximate $Q(x)$ is too hard, so instead make it dependent on the value of the last sample: $Q(x| x_{t})$ (now using $t$ to index steps). This means the sampling process is a stateful Markov chain. In general, method involves designing a Markov chain in $x$-space such that $P(x)$ is the unique invariant measure (uniqueness requires irreducibility and ergodicity). \emph{Detailed balance} is another term for reversibility,
+\be
+T(x, x') P(x') = T(x', x) P(x)
+\ee
+for all $x, x'$. Implies $P$ is invariant, but not essential!
+
+Transition matrices need to preserve $P$, i.e. $P(x') = \int \! dx \, T(x', x) P(x)$. Can build from ``base transitions'' by taking convex linear combos or by convolution. 
+
+Disadvantage of MC approach is that samples are no longer independent: $\text{Pr}(x_t) \sim P(x)$ for large $t$, but hard to tell how many steps are needed for convergence. Including dependent samples in average \emph{doesn't} bias estimates [proof?], but doesn't help, and makes error estimates harder.
+
+Also doesn't allow direct access to normalization factor/partition function $Z$, although ratios possible.
+
+Also non-Bayesian. Properly Bayesian MC would give distribution for our knowledge of the estimator which would only depend on the evaluations at the same points, not on the initial configuration of the MC or other implementation details; see \citep{GhahramaniRasmussen:03}.
+
+Matter of art whether to use one long chain (better convergence) or multiple short chains, restarted from different points (lower correlations; better chance to explore state space if $P$ is multimodal). 
+
+\subsubsection{Metropolis-Hastings}
+Generate new sample $x'$ from $Q(x' | x_t)$ and compute weight
+\be
+a = \frac{P(x')}{P(x_t)} \frac{Q(x_t | x')}{Q(x' | x_t)};
+\ee
+if $a \geq 1$, \emph{accept} the new $x'$ as $x_{t+1}$. If $a < 1$, accept with probability $a$ and reject with $1-a$, in which case keep $x_{t+1} = x_{t}.$ 
+More concretely: let $Q$ be gaussian centered on $x_t$, then we're effectively doing a random walk with step size of order $\sigma_{Q}$. (If $Q$ symmetric in arguments, second ratio is $1$.)
+
+Small steps ($\sigma_{Q}$) means slow convergence, while large steps (relative to scale of peaks/features of $P$) also means slow convergence due to frequent rejection. \marginnote{What about fractal, multimodal $P$?} \emph{But} these considerations don't get worse with high dimension (intrinsically), unlike importance and rejection sampling. ``Efficient''/practical MC methods basically deal with reducing the problems arising from random walk behavior in vanilla Metropolis-Hastings.
+
+\subsubsection{Gibbs sampling} The special case of the above when $Q$ is $P$ conditioned on all other components of the sample: $Q(x | \text{state}) = P(x_{(i)} | x_{(j) \neq i})$. Individual components of $x$ are updated in deterministic order:
+\begin{align*}
+x_{t+1, (1)} &\sim P(x_{(1)} | x_{t, (2)}, x_{t, (3)}, \ldots) \\
+x_{t+1, (2)} &\sim P(x_{(2)} | x_{t+1, (1)}, x_{t, (3)}, \ldots) \\
+x_{t+1, (3)} &\sim P(x_{(3)} | x_{t+1, (1)}, x_{t+1, (2)}, \ldots)
+\end{align*}
+This is Glauber dynamics (single spin flips) in condensed matter. Motivated as a ``quick-and-dirty'' method.
+
+\subsection{Efficient MCMC} Ref: \cite{MacKay:03} ch. 30.
+
+\subsubsection{Hamiltonian Monte Carlo} Improve random walk convergence with gradient information: adding drift to random walk gives linear instead of square-root convergence. Assumes $P(x) \sim \exp -\beta E(x)$, and that gradients of $E$ are cheap. Do this by adding momentum term $p^{2}/2$ to $E(x)$ but retaining only the $x$ coordinates of generated samples. \marginnote{What if we can only afford sampling $b \cdot \partial_{x}E$ along a few vectors $b$?}
+
+Two-step Gibbs sampling scheme: First sample $p$ (always accepted), then update $x$ and then $p$ according to
+\be
+\dot{x} = p; \qquad \dot{p} = - \partial_{x} E(x).
+\ee
+If numerics exact, this step should also always be accepted under Metropoplis, since $p^{2}/2 + E(x)$ a constant of motion. \marginnote{What about assigning fancier dynamics, like Nambu? Fictitious dynamics chosen so integrals of motion give efficient sampling.} On the other hand, dynamics need to be \textit{exactly} reversible: state space volume must be conserved, and if $(x,p) \to (x',p')$ is generated as a deterministic update, we must also generate $(x, -p)$ starting from $(x', -p')$.
+
+\subsubsection{Simulated annealing} Introduce fictitious temperature $\beta$ conjugate to $E(x)$ and tune $\beta \searrow 1$. Can only couple $\beta$ to ``messy'' terms in $E$ to interpolate between distributions. Simulated tempering \cite{MarinariParisi:92} fixes biases from getting trapped in individual minima by making $\beta$ a dynamically updated variable, see also annealed importance sampling \cite{Neal:01}.
+
+\subsubsection{MC as a communication channel} 
+
+Ref: \cite{MacKay:03} 30.5. \marginnote{Unfortunately sketchy. Anyone followed up?} 
+
+Sampling an $x$ from $P(x)$ consumes at least $\log 1/P(x)$ random bits (cf. \href{https://en.wikipedia.org/wiki/Arithmetic_coding}{arithmetic coding}). 
+
+Ignore $Q$ updates, then all information about true $P$ communicated by sequence of binary accept/reject Metropolis moves. So rule of thumb: maximize ``information learned'' about $P$ by tuning acceptance probability to be about $1/2$ (max entropy). Efficient methods try to pick $Q$ to beat this ``one bit per trial'' bound. Note that even importance sampling potentially gives us more than one bit to work with (the full ratio $P/ cQ$.)
+
+Evolutionary analogy: acceptance is mutated genome replacing old one. Not clear that genetic methods actually do this, though. 
+
+\subsubsection{Exact sampling} 
+Ref: \cite{MacKay:03} ch. 32, \cite{ProppWilson:96}. 
+
+Addresses questions of Markov chain convergence to target distribution. ``Three ideas,'' following MacKay:
+\begin{enumerate}
+\item Markov chain coalescence: Due to finite memory, if two runs of a chain from different initial conditions but using the same random number generator \marginnote{Randomness as a channel. Is there a way to phrase this that's realization-independent?} hit the same value, all subsequent values will be identical: chain has \textit{forgotten} the difference in initial conditions.
+
+\item Bounds on coalescence: Impractical to restart chain for all possible initial conditions. For practical use, look for a \textit{partial order} on configurations that's invariant under MC dynamics. Extrema under this order provide a bound: if they've coalesced, know all conditions ``between'' them have as well. \marginnote{Relax this to partial domains of attraction? Live with probabilistic estimate that chains have converged?}
+
+``Summary states'' for non-attractive distributions (Huber 1998), (Harvey and Neal 2000): bounds don't have to be tight, or even physical trajectories of system. Example given uses \textit{partial} configurations. 
+
+\item Coupling from the past: Coalescence is a distinguished event (depends on details of how the chain is designed), so coalescence doesn't immediately imply convergence. Instead start run at time $T_{0}$ in past and run up to present; \marginnote{Cf. random dynamical systems.} if coalescence hasn't happened, increase $T_{0}$. If it has, unique configuration at present is an exact sample. All runs are made with identical realization of random numbers at each time. 
+
+\end{enumerate}
+
+Other applications of coupled Markov chains --- gets into interacting particle systems, right?
+
+
+\subsubsection{Extreme values and large deviations} Above assumes that we're taking expectation of things that are smooth. What if we're interested in extreme values instead?
+
+
+
+
+\section{Information theory}
+
+\subsection{Entropy and mutual information.}
+
+Entropy
+\be
+H(X) = \sum_{x} p(x) \log p(x) \geq 0.
+\ee
+
+Mutual information
+\be
+I(X;Y) = D_{KL}[p(x,y) | p(x)p(y)] = \sum_{x,y} p(x,y) \log \frac{p(x,y)}{p(x)p(y)}  \geq 0.
+\ee
+
+[...]
+
+\subsection{Recent work on mutual information estimators.}
+
+\subsubsection{Mutual Information Neural Estimation}
+\cite{BelghaziEtAl:18}; no first-party code but third-party implementations; e.g. \href{https://github.com/gtegner/mine-pytorch}{[1]}, \href{https://github.com/MasanoriYamada/Mine_pytorch}{[2]}.
+
+Application of neural network methods to estimate mutual information from a set of samples. Wide range of nonparametric estimators in prior literature (reviewed in \cite{Paninski:03}), but argue they don't scale to high data dimensionality (also gradients can be ill-defined or expensive).
+
+General principle used often in this and following sections: derive a functional bound for the true MI. Use this as a loss function and implement the function as a neural network, ``trained'' by standard parameter optimization. The best value of the loss function is then the estimator's estimate.
+
+Here the bound used is
+\be
+D_{KL}[P | Q] = \sup_{f} \langle f \rangle_{P} - \log \langle e^f \rangle_{Q},
+\ee
+for arbitrary scalar function $f$ having the same domain as $P,Q$; this is used to get a variational lower bound for MI. Naive estimation of the gradient is biased, so an exponential weighted moving average is used [???]. For MI, minibatch sampling is applied; $P = p(x,y)$ is the empirical distribution of the batch, and $Q = p(x) \otimes p(y)$ is generated by sampling from the marginals, or by permuting one member of the $(x,y)$ pairs. 
+
+\subsubsection{Related work and follow-ups}
+
+Related work on MINE-style estimation:
+\begin{itemize}
+\item \cite{NguyenEtAl:10}: Earlier estimator (NWJ) using similar but looser bound.
+\item \cite{LiaoEtAl:20} \href{https://openreview.net/forum?id=3LujMJM9EMp}{comments}; \href{https://github.com/RayRuizhiLiao/demi_mi_estimator}{code}. Learn a network that discriminates whether samples came from the joint or product-marginal distribution. Doesn't outperform state of the art, and reviewer points out it's a specific case of ideas in NWJ.
+\item \cite{OordEtAl:19}: Another estimator (InfoNCE), based on contrast predictive coding.
+\item \cite{LinEtAl:19}; \href{https://openreview.net/forum?id=SklOypVKvS}{comments}. Propose modification of MINE training to make it more data-efficient; unclear as to how --- purely by separating data into train/test sets?
+\item \cite{ChanEtAl:19}; \href{https://github.com/ccha23/MI-NEE}{code}. Also addresses efficiency of MINE; claim improvement by estimating entropies as an intermediate step.
+\item \cite{WenEtAl:20}; \href{https://openreview.net/forum?id=ByxaUgrFvH}{comments} propose a nontrivial estimator for the gradient of MI directly that may be more relevant when it's used in a loss function.
+\end{itemize}
+
+More general discussion:
+\begin{itemize}
+\item \cite{McAllesterStratos:20}; \href{https://openreview.net/forum?id=BkedwoC5t7}{comments}. Argue that there are fundamental limitations to the entire variational lower bound program. 
+\item \cite{PooleOzair:19}: Compare variational methods in existing literature. Nothing yields good estimates for practical batch sizes, perhaps due to logic in previous ref. Propose new estimator $I_{\alpha}$ interpolating between InfoNCE and NWJ.
+\item \cite{SongErmon:20}; \href{https://openreview.net/forum?id=B1x62TNtDS}{comments}. Elaborate on bias/variance tradeoff; variance in estimates from MINE et al. can blow up due to instability. \href{https://github.com/ermongroup/smile-mi-estimator}{Code} for an improved estimator (SMILE).
+\item \cite{ChoiLee:20}; \href{https://openreview.net/forum?id=Lvb2BKqL49a}{comments} (code in supplementary material). Propose to  regularize variance blow-ups in MINE by adding a term $- d( \log \langle e^f \rangle_{Q}, C)$ where $d$ is a 1d distance function and $C$ is an arbitrary constant; use $\lambda (x-C)^{2}$. Best performance to date?
+\end{itemize}
+
+Would appear that best current estimator is either \cite{ChanEtAl:19} or \cite{ChoiLee:20}; former suffers from not providing comparison with other methods.
+
+\subsubsection{Contrastive Log-ratio Upper Bound}
+\cite{ChengEtAl:20}; \href{https://github.com/Linear95/CLUB}{code}.
+
+Prior work focusing on \emph{upper} bounds on MI (needed for MI minimization objectives) required knowledge of $p(y|x)$, e.g. the approximation to the marginal in InfoBot (\boldref{sssec-infobot}). If $p(y|x)$ is known, use
+\begin{align*}
+I(X;Y) &\leq \langle \log p(y|x) \rangle_{p(x,y)} - \langle \log p(y|x) \rangle_{p(x) \otimes p(y)}, \\
+{} &= \frac{1}{N^2} \sum_{i,j}^{N} \log(y_i|x_i) - \log(y_j|x_i);
+\end{align*}
+If $p(y|x)$ isn't known, represent it as a NN. The double sum can be improved to a single loop over the data by using a random sample of the $\{ y_{j} \}$, similar to MINE. 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Regression}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Linear filtering}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Problem statement}
+Ref: mostly \href{https://en.wikipedia.org/wiki/Kalman_filter}{wiki}, with notation changes.
+
+Context is estimation of a hidden Markov model (\boldref{sec-hidden-markov-models}) for continuous quantities in discrete time. We have stochastic system state 
+\be
+\mbf{x}_{t} = \mbf{F}_{t} \mbf{x}_{t-1} + \mbf{B} \mbf{u}_{t} + \xi_{t},
+\ee
+with iid noise $\xi \sim \mcal{N}(0, \mbf{\Gamma}_{\xi})$.
+
+This state is latent, and only accessible through noisy observations
+\be
+\mbf{z}_{t} = \mbf{H} \mbf{x}_t + \mbf{\eta}_{t},
+\ee
+with noise $\eta \sim \mcal{N}(0, \mbf{\Gamma})$.
+
+$\mbf{B}$ and $\mbf{H}$ may be time-dependent, but we suppress this in the notation.
+
+\subsection{Development}
+
+We develop the theory in stages. We begin by turning state dynamics off entirely in section \boldref{sec-bayesian-state-estimation}. We then add dynamics in \boldref{}, and control in \boldref{}.
+
+
+\section{Bayesian state estimation}
+\label{sec-bayesian-state-estimation}
+
+\subsection{Single Bayes update}
+
+Assume we have a Gaussian prior for an unchanging latent variable $X \sim \mcal{N}(\mbf{\mu}_0, \mbf{\Sigma}_0)$ updated with a noisy observation $Z = \mbf{H}X + \mbf{\eta}$, with noise $\eta \sim \mcal{N}(0, \mbf{\Gamma})$. We want to update
+\be
+P(X | Z = z) = \frac{P(Z=z | X)}{P(Z=z)} P(X).
+\ee
+From above, we have $Z | X \sim \mcal{N}(\mbf{H}X, \mbf{\Gamma})$. Know posterior will also be normally distributed, so assume normalization works out; collect terms in $\mbf{x}$ to read off parameters of $X | Z \sim \mcal{N}(\mbf{\mu}, \mbf{\Sigma})$. We have
+\begin{equation}
+\label{eq-kal-1}
+\mbf{\Sigma}^{-1} = \mbf{\Sigma}_0^{-1} + \mbf{H}^{T} \mbf{\Gamma}^{-1} \mbf{H};
+\end{equation}
+Apply \href{https://en.wikipedia.org/wiki/Woodbury_matrix_identity}{Woodbury identity} to invert
+\be
+\mbf{\Sigma} = \mbf{\Sigma}_0 + \mbf{\Sigma}_0 \mbf{H}^{T} \mbf{S}^{-1} \mbf{H} \mbf{\Sigma}_0,
+\ee
+abbreviating
+\be
+\mbf{S} \equiv \left( \mbf{\Gamma} + \mbf{H} \mbf{\Sigma}_{0} \mbf{H}^{T} \right).
+\ee
+Then, collecting terms linear in $\mbf{x}$ and matching against the desired term $- \mbf{x}^{T} \mbf{\Sigma}^{-1} \mbf{\mu}$,
+\begin{equation}
+\label{eq-kal-2}
+\mbf{\mu} = \mbf{\Sigma}\left( \mbf{\Sigma}_0^{-1} \mbf{\mu}_{0} + \mbf{H}^{T} \mbf{\Gamma}^{-1}\mbf{z} \right).
+\end{equation}
+Expanding,
+\begin{align*}
+\mbf{\mu} = \mbf{\mu}_0 - \mbf{\Sigma}_0 \mbf{H}^{T} \mbf{S}^{-1} \mbf{H} \mbf{\mu}_0 &+ \mbf{\Sigma}_0 \mbf{H}^{T} \left[ 1 - \mbf{S}^{-1} \mbf{H} \mbf{\Sigma}_{0} \mbf{H}^{T} \right] \mbf{\Gamma}^{-1} \mbf{z} \\
+ = \text{''} &+ \mbf{\Sigma}_0 \mbf{H}^{T} \left[ \mbf{S}^{-1} \mbf{S} - \mbf{S}^{-1} \left( \mbf{S} - \mbf{\Gamma} \right) \right] \mbf{\Gamma}^{-1} \mbf{z} \\
+  = \text{''} &+ \mbf{\Sigma}_0 \mbf{H}^{T} \mbf{S}^{-1} \mbf{z}.
+\end{align*}
+
+\subsection{More terminology}
+Re-express the above results by introducing new terms. 
+
+\emph{Innovation} is residual before update:
+\be
+\mbf{y}_0 = \mbf{z} - \mbf{H} \mbf{\mu}_0,
+\ee
+satisfying $\mbb{E}[\mbf{y}_0] = 0$ and $\cov(\mbf{y}_0) = \mbf{S}$. 
+
+\emph{Kalman gain} defined as how much we use $\mbf{y}_0$ to correct $\mbf{\mu}_{0}$;
+\be
+\mbf{\mu} = \mbf{\mu}_{0} + \mbf{K} \mbf{y}_0.
+\ee
+In the filtering problem, can define the optimal Kalman gain as the one that minimizes the posterior residual $\mbf{y} = \mbf{z} - \mbf{H} \mbf{\mu}$. Unsurprisingly, the minimum mean-square error gain is what we got above via Bayes' rule, namely
+\be
+\mbf{K}^{\ast} = \mbf{\Sigma}_0 \mbf{H}^{T} \mbf{S}^{-1}.
+\ee
+In these terms, the Bayes update is
+\begin{equation}
+\mbf{\mu} = \mbf{\mu}_0 + \mbf{K}^{\ast} \mbf{y}_0 = (1 - \mbf{K}^{\ast} \mbf{H})\mbf{\mu}_0 + \mbf{K}^{\ast}\mbf{z}; \qquad \mbf{\Sigma} = (1 - \mbf{K}^{\ast} \mbf{H}) \mbf{\Sigma}_0.
+\end{equation}
+
+%\subsection{Differential formulation?}
+%These forms suggest interpolation from old to new parameters as $\mbf{K}$ is turned on from $0$ to $\mbf{K}^{\ast}$.
+%
+%Unclear what the Bayesian interpretation of the continuous time Kalman filter (Kalman-Bucy) is. 
+%
+%The Bayesian paradigm is inherently discrete-time: we can't update $\mbf{\mu}$ until we learn the value of the latest $\mbf{z}$. However, in the current context (no control input) all $\mbf{z}$s are iid, and $\mu$ should be independent of the update order (prove this). If the $\mbf{z}$s are drawn from an \href{https://en.wikipedia.org/wiki/Infinite_divisibility_(probability)}{infinitely divisible} distribution, it would make sense to consider an ``infinitesimal update.''
+%
+%A related, more physical idea would be to have the noise covariance $\mbf{\Gamma}^{(i)}(t)$ for measurement $i$ start off infinitely broad at $t=0$ and converge to $\mbf{\Gamma}$ at $t=i$.
+
+
+\subsection{Information filter}
+
+Jumping back and forth between $\mbf{\Sigma}$ and $\mbf{\Sigma}^{-1}$ is cumbersome. Instead, remain in inverse space, defining
+\be
+\check{\mbf{\Gamma}} \equiv \mbf{H}^{T} \mbf{\Gamma}^{-1} \mbf{H}; \qquad \check{\mbf{z}} \equiv \mbf{H}^{T} \mbf{\Gamma}^{-1} \mbf{z}; 
+\qquad \check{\mbf{\mu}} \equiv \mbf{\Sigma}^{-1} \mbf \mu; \qquad \check{\mbf{\Sigma}} \equiv \mbf{\Sigma}^{-1}. 
+\ee
+The update can be read off from \eqref{eq-kal-1} and \eqref{eq-kal-2}:
+\begin{equation}
+\check{\mbf{\mu}}_{n} = \check{\mbf{\mu}}_{0} + \sum_{j=1}^{n} \check{\mbf{z}}_j; \qquad \check{\mbf{\Sigma}}_n = \check{\mbf{\Sigma}}_0 + n \check{\mbf{\Gamma}},
+\end{equation}
+In these variables the update is simply additive, so we can write down the multiple-update solution.
+
+
+
+\section{Adding dynamics}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Control}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Intro}
+
+\subsection{Generalities on control.}
+Ref: \cite{KappenRuiz:16}.
+
+Generically we have a system state $\mbf{x}$, control signal $\mbf{u}$ and known dynamics $\dot{\mbf{x}} = f[t, \mbf{x}(t), \mbf{u}(\mbf{x},t)]$. The ``representation problem'' is that it's wasteful to compute optimal $\mbf{u}$ for all possible $\mbf{x}$.
+
+If dynamics are deterministic, only need control input along optimal trajectory $\mbf{u}^{\ast}(t) = \mbf{u}(\mbf{x}^{\ast}(t), t)$. Example of ``open-loop'' control, where we apply $\mbf{u}(t)$ regardless of what the state actually is. 
+
+With noise (stochastic dynamics), this isn't sufficient: we need to know what input to apply if we're perturbed off the optimal trajectory, and hence $\mbf{u}$ has to depend on $\mbf{x}$ (``closed-loop'' control). Can improve via a linear feedback controller: Taylor expand around $\mbf{x}^{\ast}(t)$ to linear order in dynamics and quadratic in control cost. Then we can solve everything, obtaining a controller that stabilizes $\mbf{x}^{\ast}(t)$ when weak noise is turned on. However, turning on noise perturbs the optimal trajectory from the noiseless result, so we can repeat the construction with this new $\mbf{x}^{\ast}(t)$. This is ``differential dynamic programming'' or ``iterative LQG.''
+
+``Model predictive control'' addresses representation in a different way, by only computing $\mbf{u}(\mbf{x},t)$ for states $\mbf{x}$ as needed. At time $t$ solve the finite-horizon control problem for the interval  $[t, t+T]$, but only apply the control for a shorter time $[t, t+dt]$; then solve the finite-horizon problem again from the new state (``receding horizon.'') Not globally optimal, but more robust.
+
+
+Versus directed polymer in random medium? At fixed $\mbf{u}(\mbf{x},t)$, assume dynamics of $\mbf{x}$ follow from least-action. Then functional average (path integral) over all $\mbf{u}$, weighted by cost as $e^{-\beta R(\mbf{x},\mbf{u})}$, except we want quenched average.
+
+
+\subsection{Linear/LQG optimal control.}
+
+Ref: blog posts at \href{http://www.argmin.net/2018/06/25/outsider-rl/}{argmin.net/2018/06/25/outsider-rl/}, specifically \href{http://www.argmin.net/2018/02/08/lqr/}{third one}.
+
+System state $x_{t}$, control action $u_{t}$, noise $e_{t}$. For simplicity, drop $t$ subscript and write, e.g., $x_{+} \equiv x_{t+1}$. Maximize expected reward
+\be
+\arg \max_{u} \left\langle \sum_{t} R(x,u) \right\rangle_{e}
+\ee
+for known $R$, subject to known \emph{linear} dynamics
+\be
+x_{t+1} = f(x_{t}, u_{t}, e_{t}) = Ax + Bu + e.
+\ee
+Linearity means zero-mean, IID noise may be absorbed into a change of variable: $\mtilde{x}_{t} = x_{t} - e_{t-1}$. Then $\left\langle \mtilde{x} Q \mtilde{x} \right\rangle_{e} = xQx + \left\langle e Q e \right\rangle_{e}$. Maybe better to assume noiseless, then show adding noise doesn't create substantial problems: Achievable \emph{reward} degrades, but the optimal control signal $u$ is identical to the noiseless case.
+
+The \emph{linear quadratic regulator} is the case where $R$ is quadratic (with no cross terms --- generic change of variable?):
+\be
+R(x,u) = \left.\frac{1}{2} xSx\right|_{t=N+1} + \frac{1}{2} \sum_{t=0}^{N} xQx + uRu.
+\ee
+\marginnote{TODO: relate this to generic KKT block form.}
+
+Find optimality at extrema of Lagrangian. Impose dynamics though Lagrange multipliers (``costates'' or ``adjoints'') $p_{t}$: $\mcal{L} = R(x,u) - p(x_{+} - Ax - Bu)$. Then we have
+\begin{align}
+\label{lag1} 0 = \delta_{x}\mcal{L} &= Qx - p + A^{T}p_{+}, \\
+\label{lag2} 0 = \left.\delta_{x}\mcal{L}\right|_{t=N+1} &=  - p_{N+1}+ Sx_{N+1}, \\
+\label{lag3} 0 = \delta_{u}\mcal{L} &= Ru - p + B^{T}p_{+}, \\
+\label{lag4} 0 = \delta_{p}\mcal{L} &= x - Ax_{-} - B u_{-}.
+\end{align}
+Start at $t=N+1$ and work backwards. \eqref{lag2} gives $p_{N+1}$ directly from $x_{N+1}$. Use this to eliminate $p_{+}$ from \eqref{lag3}, and insert into EOM \eqref{lag4} to obtain
+\begin{align*}
+[R + B^{T}SB]u_{N} = - B^{T}SAx_{N}; \qquad u_{N} &= -K[S] x_{N}. \\
+\text{with } K[M] &= [R + B^{T} M B]^{-1}B^{T} M A.
+\end{align*}
+We see that, generally, if $p_{+} = M_{+} x_{+}$ for some $M_{+}$, then 
+\be
+\label{lag5} u = -K[M_{+}] x.
+\ee
+We show that this property is conserved: if  $p_{+} = M_{+} x_{+}$, there exists an $M$ such that $p = M x$. Use the assumption to eliminate $p_{+}$ in \eqref{lag1}, then use the EOM \eqref{lag4} to eliminate $x_{+}$ and finally \eqref{lag5} to eliminate $u$. Obtain
+\be
+p = [ A^{T}M_{+} (A- B K[M_{+}]) + Q] x,
+\ee
+or 
+\be
+\label{lag6} M = Q + A^{T} M_{+}A - (A^{T}M_{+}B)(R+B^{T}M_{+}B)^{-1}(B^{T}MA).
+\ee
+The solution strategy therefore has two stages: 1) run \eqref{lag6} backwards in time to obtain $\{M_{t}\}$, then run \eqref{lag5} forward in time to obtain the optimal $u$, $x$ (from EOM).
+
+Under an infinite time horizon, assume $M_{+} = M$. Fixed-point form of \eqref{lag6} is a ``discrete algebraic Ricatti equation.''
+
+Dynamic programming form of the above: truncate problem at horizon $K < N$ and try to find an $S_{K+1}$ such that the optimal $u,x$ in the truncated problem are identical to the truncation of $x,u$ found in the full-horizon problem. Claim this takes the form
+\be
+S[x] = \min_{u} xQx + uRu + (Ax + Bu)^{T} M_{+} (Ax+Bu).
+\ee
+
+
+\subsection{Control vs. ML}
+\label{sec-control-vs-ml}
+Ref: \cite{NiEtAl:21}. 
+
+(PO)MDPs are problem contexts, while RL refers to a family of algorithms for solving related problems.
+\begin{itemize}
+\item MDP assumes all dynamics is known to the agent at outset, and we only need to learn a policy. ``For any MDP, there exists an optimal policy that is both memoryless and deterministic.'' \marginnote{Even with stochastic dynamics?} 
+\item POMDP assumes only part of the MDP state is accessible to the agent, and is revealed through observations.
+\item RL assumes dynamics are knowable/fixed, but must be learned by the agent through exploration; it's the problem of learning a fixed MDP (either entirely online, or with offline data).
+\end{itemize}
+In addition, dynamics and observations may be deterministic or stochastic. 
+
+POMDP formally reducible to MDP: replace partial knowledge of real state with exact knowledge of ``belief state,'' the probability of the real state given the full history of observations up to that point. This obviously invokes the curse of dimensionality.
+
+Conversely, an MDP with uncertainty in its parameters can be modeled as a POMDP. ``Bayesian RL'' is RL done in the context of a belief distribution over the underlying MDP. Of course, this is intractable.\marginnote{Harder or easier than general POMDP?}
+
+\cite{GhoshEtAl:21} frames poor generalization of RL from in-sample/offline training in terms of an ``epistemic POMDP.''
+
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{0.95\textwidth} { 
+>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X
+}
+\hline\hline
+Sub-area & $s'$ in dynamics? & $s'$ in reward? & $s'$ constant? & Policy inputs & RL objective & Domain shift? \\
+\hline\hline
+Standard POMDP & Y & Y & N & $O, A, R$ & Avg & N \\ 
+\hline
+Meta RL & $\sim$N & Y & Y & $O, A, R, d$ & Avg & N \\ 
+\hline
+Robust RL & $\sim$Y & $\sim$N & $\sim$Y & $O, A$ & Worst & N \\ 
+\hline
+Gen'lization in RL & $\sim$Y & $\sim$N & $\sim$Y & $O, A$ & Avg &  $\sim$Y \\ 
+\hline\hline
+\end{tabularx}
+\caption{From \cite{NiEtAl:21}. $s'$ refers to the hidden POMDP state; $O, A, R, d$ refer to the sequence of observations, actions, rewards, and done signals, respectively. $\sim$ means the categorization doesn't hold for all work.
+}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Variational/Bayesian autoencoders.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Information bottleneck}
+
+\subsection{Overview}
+Ref: \cite{TishbyEtAl:99}
+
+Given a source $X$ and target $Y$, we want a ``compressed representation'' $T$ that preserves ``only the information about $X$ relevant for $Y$.'' 
+
+In more detail, assume $T \rightarrow X \rightarrow Y$ is Markov. In other words, we have a factorization assumption
+\be
+p(X,T,Y) = p(T|X,Y)p(Y|X)p(X) = p(T|X)p(Y|X)p(X).
+\ee
+The fact that $p(T|X,Y) = p(T|X)$ means $T$ can't ``look directly at the labels'' in $Y$. Then we want 
+\begin{itemize}
+\item $\min I(T;X)$ to minimize complexity, and
+\item $\max I(T;Y)$ to maximize accuracy.
+\end{itemize}
+This motivates the info bottleneck Lagrangian:
+\be
+\mcal{L}_{IB} = I(X;T) - \beta I(Y;T).
+\ee
+[note that literature differs in minimization vs. maximization, and which term has the $\beta$.] This is implemented in terms of stochastic encoding and decoding functions, $p_{\text{enc}}(t|x)$ and $p_{\text{dec}}(y|t)$ respectively. The former is what's minimized when we minimize $\mcal{L}_{IB}$; for the present case, the latter is fully defined in terms of it via the Markov/factorization assumption:
+\be
+p_{\text{dec}}(y|t) = \sum_{x} p(x,y|t) = \sum_{x} p(y|x)p(x|t) = \sum_{x} p(y|x)\frac{p_{\text{enc}}(t|x)p(x)}{p_{\text{enc}}(t)}.
+\ee
+
+As formulated, $\mcal{L}_{IB}$ is non-convex, making optimizing $p_{\text{enc}}$ difficult.
+
+
+\subsection{Sufficient dimensionality reduction}
+Ref: \cite{GlobersonTishby:03}
+
+Considers learning continuous \emph{features}: a regression problem, rather clustering. Original IB formulated in terms of discrete variables, for which this distinction not really present; the fact that the IB objective involves mutual information only means that it's invariant under reparameterizations, but this is important in practice.
+
+Formulate regression as a sufficient statistics problem; learning $y = f(x) = \langle x \rangle_{p(x|y)}$. ``Feature extraction'' as functions $\phi(x)$ of one variable which are maximally informative with respect to other variables. Let $\mathcal{P}(\phi)$ be space of joint distributions $\widetilde{p}(x,y)$ having same marginals and $\langle \phi(x) \rangle$ as the real $p(x,y)$. ``Info in measurement $\phi$'' is 
+\be
+I_{\text{meas}}( \phi; p) = \min_{\mathcal{P}(\phi)} I(X;Y) = \max_{\mathcal{P}(\phi)} H(X,Y) + \text{const}., 
+\ee
+Follows this uniquely achieved by the exponential $\widetilde{p}(x,y) \propto \exp \left[\lambda_{X}(x) + \lambda_{Y}(y) + \sum_{i} \lambda_{i}(y) \phi_{i}(x)\right]$, where $\{\lambda\}$s are Lagrange multipliers, all of which depend on the choice of $\{\phi\}$. Claim we find optimal $\widetilde{p}^{\ast}(x,y)$ from minimizing $D_{KL}[p | \widetilde{p}^{\ast}]$, restricted to this exponential form (recall that sufficient statistics exist iff distribution belongs to an exponential family; this is just trying to find the best-fit exponential for $p$.)
+
+
+\begin{itemize}
+\item Problem actually has a symmetry $X \leftrightarrow Y$, $\phi_{i}(x) \leftrightarrow \lambda_{i}(y)$. 
+\item Information-geometric interpretation of all this. 
+\item ``Most informative features'' $\phi^{\ast}(x)$ maximize $I_{\text{meas}}( \phi; p)$. How to find systematically?
+\item Can incorporate ``side information'' in the form of other variables that we want features to be \emph{un}informative about \cite{GlobersonEtAl:12}, by adding term to objective function with opposite sign.
+\item How does this differ from a vanilla variational autoencoder? \cite{BanijamaliEtAl:18} seek to minimize objective 
+\be
+\langle \log q(x|t) + \log q(y|t) \rangle_{q(t|x)} - D_{KL}[q(t|x) | q(t)]
+\ee
+for NN encoder $q(t|x)$, decoder $q(x|t)$ and classifier $q(y|t)$.
+\end{itemize}
+
+
+[...]
+
+\subsection{Tishby NIPS 2011 tutorial.} Ref: video on \href{https://www.youtube.com/watch?v=GKm53xGbAOk}{youtube}
+
+\subsubsection{Sufficient statistics}
+Bayesian hypothesis testing. Given samples $\mbf{x} = \{x_{i}\}$, determine which distribution $\omega_{j}$ they came from (start with distinguishing between two distributions.) Write the information gain $\Delta$ about $\omega$ provided by $\mbf{x}$ as
+\begin{align*}
+\Delta(\omega|\mbf{x}) = \frac{p(\omega|\mbf{x})}{p(\omega)} &= \frac{p(\mbf{x}|\omega)}{p(\mbf{x})} = \sum_{j}p(\mbf{x}|\omega_{j}); \\
+\text{rewrite as}   &= \left( 1+ \exp \sum_{i} \log \frac{p(\mbf{x}|\omega_{2})}{p(\mbf{x}|\omega_{1})} \right)^{-1} \\
+&= - \log \left( 1 + \exp \sum_{i} \log \frac{p(\mbf{x}|\omega_{2})}{p(\mbf{x}|\omega_{1})} \right).
+\end{align*}
+In what follows, define $T(\mbf{x}) = \sum_{i} \log \frac{p(\mbf{x}|\omega_{2})}{p(\mbf{x}|\omega_{1})}$. This is an additive function of the samples $\{x\}$ only.
+
+Fisher-Neyman factorization: can factorize the \emph{joint} distribution as $p(\mbf{x},\omega) = f(\mbf{x})g(\omega, T(\mbf{x}))$, meaning $T(\mbf{x})$ is a sufficient statistic for $\omega$. No matter how many samples we have, all that matters is the single number $T(\mbf{x})$. 
+
+Since $T(\mbf{x})$ is a sum of IID terms, the law of large numbers says 
+\be
+\frac{1}{N} \sum^{N} \log \frac{p(\mbf{x}|\omega_{2})}{p(\mbf{x}|\omega_{1})} 
+\underset{N\rightarrow\infty}{\longrightarrow}
+\left\langle \log \frac{p(\mbf{x}|\omega_{2})}{p(\mbf{x}|\omega_{1})} \right\rangle_{p(\mbf{x},\omega)}.
+\ee
+through ``typicality'': asymptotics are dominated by the average logs. This is basically the KL divergence
+\be
+0 \leq D[\omega_{1}|\omega_{2}] = \left\langle \log \frac{\omega_{2}(\mbf{x})}{\omega_{1}(\mbf{x})} \right\rangle_{\omega_{2}(\mbf{x})}.
+\ee
+
+\emph{Expected} info gain is just the mutual information: $\langle \Delta(\omega|\mbf{x}) \rangle_{p(\mbf{x}, \omega)} = I(X; \Omega) \geq 0$. Note that $T(\mbf{x})$ grows linearly with $N$ (extensive), while $I$ is subextensive: $\sim \log N$ for a parametric distribution (Cramer-Rao bound on parameter estimation) or $\sim N^{\eta}$ for $0 < \eta < 1$ for a distribution that's nonparametric but still ``learnable'', cf. minimal description length. 
+
+To summarize, this illustrates connections between
+\begin{itemize}
+\item Learning with a binary hypothesis (need more than one $T(\mbf{x})$ to distinguish between more than two distributions),
+\item Making an optimal binary decision,
+\item The optimal linear discriminator (claim here a perceptron on a simplex).
+\end{itemize}
+
+Minimal sufficient statistics are great but exist \emph{only} for exponential families (= Gibbs states?). ML tries to be distribution independent. Recall a sufficient statistic $T$ for a hypothesis $\theta$ satisfies $p(\mbf{x}|T,\theta) = p(\mbf{x}|T)$. A \emph{minimal} sufficient statistic is an (algebraic?) function of any other sufficient statistic (or vice versa?): it's the coarsest possible ``partition'' of sample space.
+
+Exponential families: Pitman, Koopman, Darmois.
+\be
+p(x | \theta) = h(x) \exp \left[ \sum_{r} \eta_{r}(\theta) A_{r}(x) - A_{0}(\theta) \right];
+\ee
+the maximum-entropy distribution subject to the constraints defined by the $\{ A_{r}\}$. Then sufficient statistics are $T_{r}(\mbf{x}) = \sum_{i} A_{r}(x_{i})$; additive for IID samples.
+
+\subsubsection{Info bottleneck}
+Motivate info bottleneck as the appropriate generalization of sufficient statistics: for the case of exponential families, IB recovers sufficient statistics.
+
+Claim we go beyond the formalism of exponential families and sufficient statistics with \emph{mutual information}, as ``the maximum number of independent bits about $Y$ that can be given by measurement of $X$.'' Can define MI as the unique measure satisfying both:
+\begin{enumerate}
+\item Data processing inequality: if $X \rightarrow Y \rightarrow Z$ is Markov then $I(X;Z) \leq I(X;Y)$: a feedforward process can't increase information. Many measures other than $I$ obey this, cf. Renyi entropy, Chisaeu (sp?) divergences.
+\item Bregman divergences: averaging inequality.
+\end{enumerate}
+
+Sufficiency and information. Bayesian approach: take $\theta$ random. Then $T$ is sufficient for $\theta$ iff $I(T;\theta) = I(X, \theta)$. $S$ is minimally sufficient if it retains the \emph{least} MI: for any $T$, $I(S;X) \leq I(T;X)$.
+
+\subsubsection{Discrete case} 
+Info bottleneck for clustering: original method proposed in \cite{TishbyEtAl:99}. Self-consistent equations
+\begin{align*}
+p(t|x) &= \frac{p(t)}{Z} \exp -\beta D_{KL}[p(y|x) | p(y|t)], \\
+p(t) &= \sum_{x} p(t|x) p(x), \\
+p(y|t) &= \sum_{x} p(y|x) p(x|t).
+\end{align*}
+Propose solving this iteratively using the first equation to update $p_{\text{new}}(t|x)$, but this is nonconvex. Arimoto-Blahut algorithm: alternating ``$I$-projection'' on three convex sets (left-hand sides of above). Proved technical results on convergence from empirical samples, uniqueness, optimality. 
+
+\subsubsection{Gaussian case} 
+
+Ref: \cite{ChechikEtAl:05}. 
+
+Recover canonical correlation analysis. Bottleneck $T$ is a combination of CCA eignevectors: $T=AX$ where
+\be
+A = [\alpha_{1} \mbf{u}_{1}, \ldots, \alpha_{n} \mbf{u}_{n}]; \qquad (\Sigma_{XY} \Sigma^{-1}_{XX}) \mbf{u}_{k} = \lambda_{k} \mbf{u}_{k},
+\ee
+and $\alpha_{k}^{2} = \max[0, (\beta(1-\lambda_{k}) -1 )/\lambda_{k}]$. The $\max[\ldots]$ produces discrete structural transitions: $\beta$ sets the rank of $A$. cf. Shannon ``water filling'' analogy. IB tradeoff curve can be obtained analytically in terms of the $\{ \lambda_{k} \}$. 
+
+Remark that for self-similar data, the $\{ \lambda_{k} \}$ satisfy a recursion and the IB curve is a power law. How deep is the recursion? How to determine empirically? What about multifractal processes??
+
+\subsubsection{Kernel IB} Jacoby and Tishby 2011. ``When things aren't Gaussian, make them Gaussian'': Embed data (nonlinearly) in a sufficiently high-dimensional space with the ``kernel trick,'' then hope linear analysis on that works. Same method used in support vector machines, kernel PCA, kernel CCA. Means choice of embedding kernel is key.
+
+Q: what if $X$, $Y$ don't have finite second moments?
+
+\subsubsection{Predictive information and control} Estimation and control $\rightarrow$ compression and prediction. Not all info from the past is usable for predicting the future. Want to find this (cf. rate distortion coding) and perform a past-future IB. Past info as a ``perception channel'' and future state as a ``prediction channel.'' ``We see what we expect to see''--- perception guided by prediction. Coarse grained variables are predictable further into the future.
+
+Partially-observed Markov decision process: add a hidden Markov model to a MDP. Hidden state of world $W$, observed state $M$, observation channel $O$ and action $A$. Claim that if observations reveal full state of the world, we're back to an MDP and memory isn't needed. 
+
+Reinforcement learning: assign reward to each transition in world $W_{t} \rightarrow W_{t+1}$. Also introduce an ``intrinsic reward'' for uncovering more info from observations $M_{t} \rightarrow M_{t+1}$. Switch to discrete setting for tractability: stochastic MDP defines states $s$, actions $a$, transitions $p(s'|s,a)$. Stochasticity because we can't be certain what state we're in. 
+
+Planning problem: want optimal policy $\pi(a|s)$ maximizing expected future reward. Bellman optimality: see Emo Todorov, Bert Kappen, Karl Friston. 
+
+
+\subsection{Recent work on info bottleneck.}
+
+
+\subsubsection{Related work and follow-ups}
+
+\cite{GoldfeldPolyanskiy:20} is a recent review of many of the refs below.
+
+\begin{itemize}
+\item \cite{StrouseSchwab:17}; \href{https://github.com/djstrouse/information-bottleneck}{code}. Proposes to replace the ``soft''/stochastic cluster assignments generated by IB with ``hard''/deterministic ones through the use of $\mcal{L}_{DIB} = H(T) - \beta I(Y;T)$, where minimization still done over cluster assignments $p(t|x)$. $\mcal{L}_{DIB} - \mcal{L}_{IB} = H(T|X)$, so IB encourages stochasticity in its assignments. Claim DIB solution performs similar to IB solution in terms of IB loss, while being a significant improvement in DIB terms, while converging faster (for an Arimoto-Blahut-type algorithm.)
+
+\item \cite{KolchinskyEtAl:18}; \href{https://openreview.net/forum?id=rke4HiAcY7}{comments}, \href{https://github.com/artemyk/ibcurve}{code}. For the case where $Y$ is a deterministic function of $X$, the MI tradeoff curve can't be explored by varying $\beta$ (because it's piecewise-linear, not concave) and for all $\beta$ find trivial solutions obtained by probabilistically ``forgetting'' a portion of $X$. Propose to fix this via modifying $\mcal{L}'_{IB} = I(X;T)^2 - \beta I(Y;T)$.\marginnote{``Units''?} Same problems arise in DIB, and are fixed with $\mcal{L}'_{DIB} = H(T)^2 - \beta I(Y;T)$.
+
+\item \cite{RodriguezGalvezEtAl:20}; \href{https://github.com/burklight/convex-IB-Lagrangian-PyTorch}{code} clarify results of the above: $I^{2}$ can be replaced with any convex function, and this can be used to relate $\beta$ to the achieved compression rate.
+
+\item \cite{NgampruetikornSchwab:21}; \href{https://openreview.net/forum?id=A2HvBPoSBMs}{comments}. ``Perturbation theory'' in that perturbation is done around the nonzero threshold $\beta_{c}$ below which the representation $T$ is uninformative ($I(T;Y) = I(T;X) =0$; \cite{WuEtAl:19} for more on this phenomenon). The perturbation is done around an uninformative $p_{\text{enc}}(t|x) = p(t)$. Nice but not usable for applications.
+
+\item \cite{HuangGamal:21}; \href{https://github.com/hui811116/ib-admm}{code}. Show that convergence can be guaranteed with ADMM if the state space is augmented with the marginal $p(t)$. Legit?
+\end{itemize}
+
+\subsubsection{Deep variational IB} 
+Ref: \cite{AlemiEtAl:16}; \href{https://github.com/alexalemi/vib_demo}{code}.
+
+Makes IB implementable using a neural network for encoding/decoding. \cite{ChalkEtAl:16} does the same with kernels; claim this is more efficient.
+
+Derivation of the variational bound: let $q(Y|T)$ be an approximation to the true decoder. Then $D_{KL}[p(Y|T), q(Y|T)] \geq 0$ implies
+\begin{align*}
+I(T;Y) &\geq \sum_{y,t} p(y,t) \log \frac{q(y|t)}{p(y)} = H(Y) + \sum_{y,t} p(y,t) \log q(y|t), \\
+{} &\geq \sum_{x,y,t} p(x)p(y|x) p(t|x) \log q(y|t).
+\end{align*}
+In the last line we inserted the Markov factorization and dropped $H(Y)$ since it's independent of $T$. For a bound on the other term $I(X;T)$, we likewise need an approximation $q(t)$ to the true marginal $p(t)$. Similar considerations give \marginnote{Should be able to do better: take follow-up papers to MINE estimator or \cite{PooleOzair:19}.}
+\be
+I(T;X) \leq \sum_{x,t} p(x)p(t|x) \log \frac{p(t|x)}{q(t)}.
+\ee
+Combining these yields an upper bound on $\mcal{L}_{IB}$. 
+
+Propose to actually evaluate this by plugging in the empirical distribution for $p(x,y)$ \marginnote{Could regularize $p(x,y)$ and do better?} and using the ``reparameterization trick'': write $t=f(x,\epsilon)$ as a deterministic function of $x$ and a Gaussian random variable $\epsilon$. Then $p(t|x)dt = p(\epsilon)d\epsilon$. Propose to do this by using a neural net to represent mean and covariance of $T$??
+
+Note that variational formulation breaks reparameterization (copula) invariance present in real IB \cite{WieczorekEtAl:18,WieczorekRoth:20}.
+
+
+\subsubsection{Variational Predictive IB} 
+Ref: \cite{Alemi:20}.
+
+Specialize above to the past-future IB case, where $X$ is the observable past of a timeseries and $Y$ is its future. Need modification because we haven't observed the future; use Markov property that $T$ and $Y$ are conditionally independent given $X$. This means $I(T;Y) = I(T;X) - I(T; X|Y)$: The conditioned MI term avoids the need to know the future: it measures the inefficiency of $T$, as measured after we know the future. Our objective is
+\be
+\min_{p(t|x)} I(T;X|Y) - \beta I(T;X).
+\ee
+Assuming the posterior $q(X|T)$ factorizes (claim this isn't necessary and can be replaced by a better approximation), this is
+\be
+\min_{p(t|x)} \left\langle \log\frac{p(t|x)}{q(t)} - \beta \sum_{x} \log q(x|t) \right\rangle.
+\ee
+Refer to \cite{AlemiFischer:18a} (\href{https://openreview.net/forum?id=HJeQToAqKQ}{comments}) for more refined approximations than used here.
+
+
+\subsubsection{Conditional entropy bottleneck}
+Ref: \cite{Fischer:20}, \href{https://openreview.net/forum?id=rkVOXhAqY7}{comments}; \cite{FischerAlemi:20}, \href{https://openreview.net/forum?id=SygEukHYvB}{comments}. 
+
+Proposes to address non-informative encodings by attempting to reach the ``minimum necessary information'' point, at which $I(X;Y) = I(X;T) = I(Y;T)$; this is not always achievable. Proposes 
+\begin{align*}
+\min_{T} I(X; T|Y) - \gamma I(Y;T); \text{ minimized when } \\
+\min_{T} -H(T|X) + H(T|Y) + \gamma H(Y|T) \text{ is.}
+\end{align*}
+For deterministic $X \rightarrow Y$, achieve MNI at $\gamma = 1$. Equivalent to IB at $\gamma = \beta - 1$ under Markov assumption, since then $I(X; T|Y) = I(X;T) - I(Y;T)$; not identical because we dropped $H(Y)$ in second line.
+
+Variational implementation via learning \emph{three} functions (similar to VIB): $q_{\text{enc}}(t|x)$, such that joint $p(x,y,t) = p(x,y)q_{\text{enc}}(t|x)$; ``classifier'' $q_{\text{dec}}(y|t)$ and ``backward encoder'' $q_{\text{dec}}(t|y)$ instead of VIB's marginal $q(t)$. \marginnote{Do we need constraints to keep these three functions consistent?} Argue this gives a tighter bound than VIB (not necessarily; \cite{GeigerFischer:20}):
+\be
+\min_{\text{all $q$s}} \left\langle \log \frac{q_{\text{enc}}(t|x)}{q_{\text{dec}}(t|y)} - \gamma \log q_{\text{dec}}(y|t) \right\rangle_{p(x,y)q_{\text{enc}}(t|x)}.
+\ee
+
+Discusses several extensions. One is to hierarchical models $Y \leftrightarrow X = T_{0} \rightarrow T_1 \rightarrow T_2 \rightarrow \cdots$:
+\be
+\min_{\{T_i\}} \sum_i -H(T_{i}|T_{i-1}) + H(T_{i}|Y) + H(Y|T_{i}).
+\ee
+Another is the predictive IB setting. Can simply plug in $X = X_<; Y = X_\geq$ above. Can also work in the ``bidirectional'' context, where we learn two representations, $T_<$ and $T_\geq$:
+\be
+\min_{T_<, T_\geq} \left[ -H(T_< | X_<) + H(T_< | X_\geq ) + \gamma H(X_\geq | T_< ) \right] + [ (<t) \leftrightarrow (\geq t) ].
+\ee
+These are tied together by using the same encoder and backwards encoder. Introducing a fourth ``decoder'' distribution $q_{\text{enc}}(x|t)$, 
+\be
+\min_{\{q\}} \left\langle \log \frac{q(t_< | x_<) q(t_\geq|x_\geq)}{q(t_< | x_\geq) q(t_\geq|x_<)} - \gamma \log q(x_\geq | t_< ) q(x_< | t_\geq) \right\rangle_{p(x,y)q(t_< | x_<) q(t_\geq|x_\geq)}.
+\ee
+
+Propose to address multi-scale time series analysis by combining these objectives: each level of the hierarchy of $T_i$s would correspond to greater smoothings, conditioned on the set of $T_{i-1}$s. Reference \href{https://en.wikipedia.org/wiki/WaveNet}{WaveNet} \cite{OordEtAl:16,OordEtAl:17} as an example of a multi-scale neural architecture.
+
+
+\subsection{IB applications to RL/control.}
+
+\subsubsection{InfoBot} 
+\label{sssec-infobot}
+Ref: \cite{GoyalEtAl:19}.
+
+Apply IB for regularization in RL (for increased generalization, avoiding overfitting). Specifically, want to minimize policy dependence on the goal as measured by $I(A;G|S)$. ``Goal'' $G$ seems to refer to variable but undesirable details of training data, like the location of the goal in a maze. This is equivalent to a KL regularization term where we penalize deviations of the policy from a ``default'' policy that integrates out dependence on $G$:
+\be
+\pi_{0} = \sum_{g} p(g) \pi(A|S,g). 
+\ee
+Refer to system states $S$ where we it's worth deviating from this default as ``decision states''; reward exploration by incentivizing agent to seek these out.\marginnote{Why do they think these are isolated?}
+
+Adds an extra variable to the Markov structure of IB: $S,G \rightarrow T \rightarrow A$, but in addition $S \rightarrow A$ (formally distinguishing the roles of $S$ and $G$). Build policy from IB encoder/decoder:
+\be
+\pi(A | S,G) = \sum_{t} p_{\text{dec}}(A|S,t) p_{\text{enc}}(t|S,G).
+\ee
+Cost-to-go is $J(\pi) = \langle r \rangle_{\pi} - \beta I(A;G|S)$; we bound the MI with $I(T;G|S)$. This requires the marginal $p(T|S) = \sum_{g} p(g) p_{\text{enc}}(T|S,g)$, which is difficult (goal $G$ plays role of the ``future''; we probably have poor knowledge about the out-of-sample $p(G)$ the agent will encounter.) Replace it with a variational approximation $q(T|S)$ to get the lower bound used in practice:
+\be
+J(\pi) \geq \mtilde{J}(\pi) = \left\langle r - \beta D_{KL}[p_{\text{enc}}(T|S,G) | q(T|S)] \right\rangle_{\pi},
+\ee
+with parameter update rule (under the ``Reinforce'' algorithm; Monte Carlo policy gradient)
+\be
+\nabla_{\theta} \left.\mtilde{J}(\pi)\right|_{t} = \left( \sum_{t'=t}^{T} \gamma^{t'-t}\mtilde{r}_{t'} \right) \log\pi(a_t | s_t, g_t) - \beta \nabla_{\theta} D_{KL}[p_{\text{enc}}(T|s_t, g_t) | q(T|s_t)],
+\ee
+where the modified reward
+\be
+\widetilde{r}_{t} = r_{t} + \beta D_{KL}[p_{\text{enc}}(T|s_t, g_t) | q(T|s_t)].
+\ee
+
+Again, still seeking to maximize reward, rather than an info-theoretic quantity, which distinguishes this from IB. Correspondence with variational IB is recovered if we were to replace $\langle r \rangle$ with $I(A^\ast; A|S)$, where $A^\ast$ is the true optimal action --- this gives the VIB objective between $G$ and $A^\ast$, conditioned on $S$. 
+
+
+\subsubsection{Variational Bandwidth bottleneck} 
+Ref: \cite{GoyalEtAl:19a}.
+
+One problem with variational IB is that encoder needs access to full input training, so itself can be overfitted, in the sense that it might not compress new inputs. Fix by defining two classes of input: ``standard'' $S$ and ``privileged'' $G$ (assumed independent here). These deliberately map onto the state/goal representations in InfoBot. We want to avoid using $G$, either because we want to generalize with respect to it, or because it's intrinsically expensive to obtain/calculate\marginnote{For example, it could be model output...}. Now we minimize conditional MI between $T$ and $G$ given $S$; the algorithm makes decisions on whether to invoke $G$ before looking at it (InfoBot always accesses $G$.)
+
+With variables and Markov dependencies as in InfoBot, the bound used is
+\be
+I(T;G|S) \leq \sum_{s,g} p(s)p(g) D_{KL}[p_{\text{enc}}(T|s,g) | q(T)].
+\ee
+
+How do we decide when to use $G$? Refer to a ``budget'' (channel capacity $d_c$, taken between 0 and 1). Could just stochastically choose between a deterministic encoder $f(S,G)$, and the ``prior'' $q(T)$. This binary choice is non-differentiable, though. Instead define a function $d_c = B(S)$, to be parameterized by a NN. 
+\be
+D_{KL}[p_{\text{enc}}(T|s,g) | q(T)] = -d_c \log d_c + (1-d_c)\left\{ \log p(f(s,g)) - \log [d_c p(f(s,g)) + (1-d_c)] \right\}.
+\ee
+
+In here as in InfoBot, assume $q(T)$ is a unit Gaussian. Why? Not sensitive to details?
+
+Need to see an implementation for this to make sense.
+
+
+
+\subsubsection{Predictive info soft actor-critic}
+Ref: \cite{LeeEtAl:20}; \href{https://github.com/google-research/pisac}{code}.
+
+
+[...]
+
+
+\subsubsection{Robust predictable control}
+Ref: \cite{EysenbachEtAl:21a}; \href{https://ben-eysenbach.github.io/rpc/}{code}.
+
+[...]
+
+
+\section{Variational autoencoders}
+
+``GANs bypass any inference of latent variables, and auto-regressive models abstain from using latent variables. VAEs jointly learn an inference model and a generative model, allowing them to infer latent variables from observed data.''
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Continuum formulations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Probability}
+
+
+\subsection{Gaussian Processes}
+
+[...]
+
+
+\subsection{Lagrangians}
+(\href{http://math.mit.edu/classes/18.086/2006/am72.pdf}{ref} for this (Strang)). 
+
+Three forms for all calculus of variations problems:
+\begin{enumerate}
+\item Variational (optimization; here least action principle):
+\be
+\min_{x} \mcal{S}[x] = \min_{x} \left\{ \int \! dt \, \mcal{L}[t, x(t), \dot{x}(t)] \right\},
+\ee with Dirichlet BCs on endpoints $x(0)$, $x(T)$. 
+\item Weak form (here ``principle of virtual work''). Take any test function $y$, form $\mcal{S}[x+y] - \mcal{S}[x]$ and set term linear in $y$ to zero to express optimality. 
+\be
+\delta \mcal{S} = \int dt \, \left[ \frac{\partial \mcal{L}}{\partial x} \delta x  + \frac{\partial \mcal{L}}{\partial \dot{x}} \delta\dot{y} \right]= 0.
+\ee
+\item Strong form (here Euler-Lagrange equations): Integrate weak form by parts. Boundary conditions handle surface term.
+\be
+\frac{\partial \mcal{L}}{\partial x} - \frac{d}{dt} \frac{\partial \mcal{L}}{\partial \dot{x}} = 0.
+\ee
+\end{enumerate}
+Even simpler matrix case (to motivate KKT et al): $\min_{u} \tfrac{1}{2} u' A u - u' b$; then $v' A u = v' b$ for any $v$, or $Au = f$.
+
+
+\section{Control}
+
+\subsection{Bellman 2}
+(\href{https://math.stackexchange.com/questions/782621/difference-between-variation-of-calculus-problems-and-control-theory-problems}{ref} for this, also wiki). 
+
+Switch notation. Control theory only fixes initial endpoint (just adding additional bookkeeping for optimization over final BC, right?). Also deals with differential constraints, so introduce $u$ as a multiplier for $\dot{x}$ and you'd say
+\begin{align*}
+\min_{u} \mcal{S}[u] &= \min_{u}\left\{ \Phi[x(T)] + \int_{0}^{T} dt \, \mcal{F}[t, x(t), u(t)] \right\}, \\
+\dot{x} &= g[t, x(t), u(t)].
+\end{align*}
+where the second equation (first-order dynamic constraints) is called the ``state equation'' and $\Phi$ is the ``endpoint cost.'' Can also have ``path constraints'' on $x$, $u$ (no derivatives).
+
+\emph{Pontryagin's Maximum Principle} just buys us the ability to deal with discontinuity? Replace $\delta \mcal{H} = 0$ condition with simple $\max \mcal{H}$?
+
+
+
+\subsection{Path integral control}
+Ref: \cite{TheodorouEtAl:10}.
+
+Finite horizon stochastic control. Make assumption that dynamics \emph{linear} in $u_{t}$, reward is \emph{quadratic} in $u_{t}$:
+\be
+\dot{x}_{t} = f(x_{t},t) + g(x_{t})[u_{t} + dw_{t}]; \qquad r_{t} = q(x_{t},t) + \frac{1}{2} u_{t}^{T}R u_{t},
+\ee
+where Gaussian noise $dw$ has variance $\Sigma_{w}$. HJB equation for cost-to-go is then
+\be
+-\partial_{t} J(x_{t}, t) = \min_{u} \left[ r_{t} + (\partial_{x} J)^{T} (f_{t} + g_{t}u_{t}) + \frac{1}{2} \Tr g_{t} \Sigma_{w} g_{t}^{T} \right],
+\ee
+which is solved by
+\be
+u^{\ast}(x_{t}) = -R^{-1} g_{t}^{T} \partial_{x} J.
+\ee
+Substituting this back into HJB gives a nonlinear PDE for $J$, which may be linearized by the change of variables $J = - \lambda \log \Psi(x_{t}, t)$. \marginnote{How does this relate to Schrodinger/physical notions? $\lambda$ like $\hbar$...} 
+
+Crucial point for this method: We need to assume $\lambda R^{-1} = \Sigma_{w}$, which is expressing the observation that variance of the control input and cost of that input are inversely related. (This is dictated by the need for linearization and isn't a well-motivated assumption in general: it implies that noiseless variables can't be controlled [and vice versa?]).
+
+Under this assumption we get the Chapman-Kolmogorov PDE
+\be
+-\partial_{t} \Psi = - \frac{1}{\lambda} q_{t} \Psi + f_{t}^{T} \partial_{x} \Psi + \frac{1}{2} \Tr \, (\partial^{2}_{x} \Psi) g_{t} \Sigma_{w} g_{t}^{T},
+\ee
+with boundary condition $\Psi(t_{F}) = \exp [ - \phi(t_{F}) / \lambda]$. This can be expressed as a path integral using the Feynman-Kac theorem:
+\be
+\Psi( x_i, t_i) = \int \! d\xi \, \exp - \frac{1}{\lambda} \left( \phi(t_{F}) + \int_{t_i}^{t_{F}} \! dt \, q_{t} \right),
+\ee
+where the integration is over all trajectories $\xi$ starting at $x_{i}(t_i).$
+
+Theodorou et al. go on to generalize to the case where $g_{t}$ is state-dependent and partitioned into controlled [$(c)$] and non-controlled degrees of freedom. Define generalized cost
+\begin{align*}
+\widetilde{S}(\xi) &= S(\xi) + \frac{\lambda}{2} \int_{t_i}^{t_{F}} \! dt \, \log |H(t_{j})|, \text{ where} \\
+S(\xi) &= \phi(t_{F}) + \int_{t_i}^{t_{F}} \! dt \, \left( q_{t} + || \dot{x}^{(c)}_{t} - f^{(c)}_{t} ||^{2}_{H_{t}^{-1}} \right); \\
+H_{t} &= g^{(c)}_{t} R^{-1}g^{(c) T}_{t}.
+\end{align*}
+$\widetilde{S}(\xi)/\lambda$, normalized by the associated partition function $\widetilde{Z}$, is the path integral probability measure for the path $\xi$. \marginnote{How does this compare to e.g. MSR for the uncontrolled Langevin dynamics? What would diagrams look like?} The optimal control can be written as an expectation with respect to it: 
+\be
+u^{\ast} = \frac{1}{\widetilde{Z}} \int \! d\xi \, e^{-\frac{\widetilde{S}}{\lambda}} R^{-1} g^{(c) T}_{t} H_{t}^{-1} \left[ g^{(c)}_{t} dw_{t} - \frac{\lambda}{2} H_{t} \Tr \, (H_{t}^{-1} \partial_{x} H_{t}) \right].
+\ee 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% References
+
+\clearpage
+\newgeometry{total={5.75in, 9in}} % https://stackoverflow.com/questions/1670463
+% \section{References}
+
+% reduce spacing between bibliography items
+\let\oldthebibliography=\thebibliography
+\let\endoldthebibliography=\endthebibliography
+\renewenvironment{thebibliography}[1]{%
+    \begin{oldthebibliography}{#1}%
+    \setlength{\parskip}{3pt plus 2pt minus 1pt}%
+    \setlength{\itemsep}{3pt}%
+}%
+{%
+    \end{oldthebibliography}%
+}
+
+% put biblio in small text, 2-column environment
+\begin{adjmulticols*}{2}{-2cm}{-1.5cm}[\section*{References}] % expand margins
+
+\noindent
+%\begin{adjmulticols}{2}{-2cm}{-2cm} % expand margins
+\footnotesize %\small %
+\begin{flushleft}
+\bibliographystyle{alphaurl}
+\bibliography{info-optim-control,info-optim-control-2}
+%\printbibliography
+\end{flushleft}
+\normalsize
+
+\end{adjmulticols*}
+
+\end{document}
+ 

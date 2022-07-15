@@ -1,0 +1,537 @@
+
+@article{BleiEtAl:17,
+  ids = {BleiEtAl:17a},
+  title = {Variational {{Inference}}: {{A Review}} for {{Statisticians}}},
+  shorttitle = {Variational {{Inference}}},
+  year = {2017},
+  journal = {J. Am. Stat. Assoc.},
+  volume = {112},
+  number = {518},
+  pages = {859--877},
+  publisher = {{Taylor \& Francis}},
+  issn = {0162-1459},
+  doi = {10.1080/01621459.2017.1285773},
+  abstract = {One of the core problems of modern statistics is to approximate difficult-to-compute probability densities. This problem is especially important in Bayesian statistics, which frames all inference about unknown quantities as a calculation involving the posterior density. In this article, we review variational inference (VI), a method from machine learning that approximates probability densities through optimization. VI has been used in many applications and tends to be faster than classical methods, such as Markov chain Monte Carlo sampling. The idea behind VI is to first posit a family of densities and then to find a member of that family which is close to the target density. Closeness is measured by Kullback\textendash Leibler divergence. We review the ideas behind mean-field variational inference, discuss the special case of VI applied to exponential family models, present a full example with a Bayesian mixture of Gaussians, and derive a variant that uses stochastic optimization to scale up to massive data. We discuss modern research in VI and highlight important open problems. VI is powerful, but it is not yet well understood. Our hope in writing this article is to catalyze statistical research on this class of algorithms. Supplementary materials for this article are available online.},
+  keywords = {unsrt,unsrt-2021-06-12},
+  annotation = {\_eprint: https://doi.org/10.1080/01621459.2017.1285773},
+  file = {/Users/tsj/Documents/Zotero/storage/DXKSHTN8/Variational Inference-Blei et al-2017.pdf;/Users/tsj/Documents/Zotero/storage/EVRVNHES/Variational Inference-Blei et al-2017.pdf},
+  author = {Blei, D. M. and Kucukelbir, A. and McAuliffe, J. D.}
+}
+% == BibTeX quality report for BleiEtAl:17:
+% ? Possibly abbreviated journal title J. Am. Stat. Assoc.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("Taylor and Francis+NEJM")
+% ? unused Publication title ("Journal of the American Statistical Association")
+% ? unused Url ("https://doi.org/10.1080/01621459.2017.1285773")
+
+@article{BrehmerEtAl:20,
+  title = {Mining Gold from Implicit Models to Improve Likelihood-Free Inference},
+  year = {2020},
+  journal = {PNAS},
+  volume = {117},
+  number = {10},
+  pages = {5242--5249},
+  publisher = {{National Academy of Sciences}},
+  issn = {0027-8424, 1091-6490},
+  doi = {10.1073/pnas.1915980117},
+  abstract = {Simulators often provide the best description of real-world phenomena. However, the probability density that they implicitly define is often intractable, leading to challenging inverse problems for inference. Recently, a number of techniques have been introduced in which a surrogate for the intractable density is learned, including normalizing flows and density ratio estimators. We show that additional information that characterizes the latent process can often be extracted from simulators and used to augment the training data for these surrogate models. We introduce several loss functions that leverage these augmented data and demonstrate that these techniques can improve sample efficiency and quality of inference.},
+  chapter = {Physical Sciences},
+  copyright = {\textcopyright{} 2020 . https://www.pnas.org/site/aboutpnas/licenses.xhtmlPublished under the PNAS license.},
+  langid = {english},
+  pmid = {32079725},
+  file = {/Users/tsj/Documents/Zotero/storage/BSSMYDBX/Mining gold from implicit models to improve-Brehmer et al-2020.pdf},
+  author = {Brehmer, J. and Louppe, G. and Pavez, J. and Cranmer, K.}
+}
+% == BibTeX quality report for BrehmerEtAl:20:
+% ? unused Library catalog ("www.pnas.org")
+% ? unused Publication title ("Proceedings of the National Academy of Sciences")
+% ? unused Url ("https://www.pnas.org/content/117/10/5242")
+
+@article{ClearyEtAl:21,
+  ids = {ClearyEtAl:20,ClearyEtAl:21b},
+  title = {Calibrate, Emulate, Sample},
+  year = {2021},
+  journal = {Journal of Computational Physics},
+  volume = {424},
+  eprint = {2001.03689},
+  eprinttype = {arxiv},
+  pages = {109716},
+  issn = {0021-9991},
+  doi = {10.1016/j.jcp.2020.109716},
+  abstract = {Many parameter estimation problems arising in applications can be cast in the framework of Bayesian inversion. This allows not only for an estimate of the parameters, but also for the quantification of uncertainties in the estimates. Often in such problems the parameter-to-data map is very expensive to evaluate, and computing derivatives of the map, or derivative-adjoints, may not be feasible. Additionally, in many applications only noisy evaluations of the map may be available. We propose an approach to Bayesian inversion in such settings that builds on the derivative-free optimization capabilities of ensemble Kalman inversion methods. The overarching approach is to first use ensemble Kalman sampling (EKS) to calibrate the unknown parameters to fit the data; second, to use the output of the EKS to emulate the parameter-to-data map; third, to sample from an approximate Bayesian posterior distribution in which the parameter-to-data map is replaced by its emulator. This results in a principled approach to approximate Bayesian inference that requires only a small number of evaluations of the (possibly noisy approximation of the) parameter-to-data map. It does not require derivatives of this map, but instead leverages the documented power of ensemble Kalman methods. Furthermore, the EKS has the desirable property that it evolves the parameter ensemble towards the regions in which the bulk of the parameter posterior mass is located, thereby locating them well for the emulation phase of the methodology. In essence, the EKS methodology provides a cheap solution to the design problem of where to place points in parameter space to efficiently train an emulator of the parameter-to-data map for the purposes of Bayesian inversion.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Important},
+  file = {/Users/tsj/Documents/Zotero/storage/JXLD89CU/Calibrate, emulate, sample-Cleary et al-2021.pdf},
+  author = {Cleary, E. and {Garbuno-Inigo}, A. and Lan, S. and Schneider, T. and Stuart, A. M.}
+}
+% == BibTeX quality report for ClearyEtAl:21:
+% ? unused Library catalog ("ScienceDirect")
+
+@article{CranmerEtAl:20,
+  title = {The Frontier of Simulation-Based Inference},
+  year = {2020},
+  journal = {PNAS},
+  volume = {117},
+  number = {48},
+  pages = {30055--30062},
+  publisher = {{National Academy of Sciences}},
+  issn = {0027-8424, 1091-6490},
+  doi = {10.1073/pnas.1912789117},
+  abstract = {Many domains of science have developed complex simulations to describe phenomena of interest. While these simulations provide high-fidelity models, they are poorly suited for inference and lead to challenging inverse problems. We review the rapidly developing field of simulation-based inference and identify the forces giving additional momentum to the field. Finally, we describe how the frontier is expanding so that a broad audience can appreciate the profound influence these developments may have on science.},
+  chapter = {Colloquium Paper},
+  copyright = {\textcopyright{} 2020 . https://www.pnas.org/site/aboutpnas/licenses.xhtmlPublished under the PNAS license.},
+  langid = {english},
+  pmid = {32471948},
+  file = {/Users/tsj/Documents/Zotero/storage/TCIRFTGV/The frontier of simulation-based inference-Cranmer et al-2020.pdf},
+  author = {Cranmer, K. and Brehmer, J. and Louppe, G.}
+}
+% == BibTeX quality report for CranmerEtAl:20:
+% ? unused Library catalog ("www.pnas.org")
+% ? unused Publication title ("Proceedings of the National Academy of Sciences")
+% ? unused Url ("https://www.pnas.org/content/117/48/30055")
+
+@article{DunbarEtAl:21,
+  ids = {DunbarEtAl:20,DunbarEtAl:21a},
+  title = {Calibration and {{Uncertainty Quantification}} of {{Convective Parameters}} in an {{Idealized GCM}}},
+  year = {2021},
+  journal = {J. Adv. Model. Earth Syst.},
+  volume = {13},
+  number = {9},
+  eprint = {2012.13262},
+  eprinttype = {arxiv},
+  pages = {e2020MS002454},
+  issn = {1942-2466},
+  doi = {10.1029/2020MS002454},
+  abstract = {Parameters in climate models are usually calibrated manually, exploiting only small subsets of the available data. This precludes both optimal calibration and quantification of uncertainties. Traditional Bayesian calibration methods that allow uncertainty quantification are too expensive for climate models; they are also not robust in the presence of internal climate variability. For example, Markov chain Monte Carlo (MCMC) methods typically require model runs and are sensitive to internal variability noise, rendering them infeasible for climate models. Here we demonstrate an approach to model calibration and uncertainty quantification that requires only model runs and can accommodate internal climate variability. The approach consists of three stages: (a) a calibration stage uses variants of ensemble Kalman inversion to calibrate a model by minimizing mismatches between model and data statistics; (b) an emulation stage emulates the parameter-to-data map with Gaussian processes (GP), using the model runs in the calibration stage for training; (c) a sampling stage approximates the Bayesian posterior distributions by sampling the GP emulator with MCMC. We demonstrate the feasibility and computational efficiency of this calibrate-emulate-sample (CES) approach in a perfect-model setting. Using an idealized general circulation model, we estimate parameters in a simple convection scheme from synthetic data generated with the model. The CES approach generates probability distributions of the parameters that are good approximations of the Bayesian posteriors, at a fraction of the computational cost usually required to obtain them. Sampling from this approximate posterior allows the generation of climate predictions with quantified parametric uncertainties.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {⛔ No DOI found,Important},
+  annotation = {\_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1029/2020MS002454},
+  file = {/Users/tsj/Documents/Zotero/storage/J2HIBSFU/Calibration and Uncertainty Quantification of-Dunbar et al-2021.pdf;/Users/tsj/Documents/Zotero/storage/UBVVES86/Calibration and Uncertainty Quantification of-Dunbar et al-2021.pdf},
+  author = {Dunbar, O. R. A. and {Garbuno-Inigo}, A. and Schneider, T. and Stuart, A. M.}
+}
+% == BibTeX quality report for DunbarEtAl:21:
+% ? Possibly abbreviated journal title J. Adv. Model. Earth Syst.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("Wiley Online Library")
+% ? unused Publication title ("Journal of Advances in Modeling Earth Systems")
+% ? unused Url ("https://onlinelibrary.wiley.com/doi/abs/10.1029/2020MS002454")
+
+@article{Garbuno-InigoEtAl:20,
+  ids = {Garbuno-InigoEtAl:19,Garbuno-InigoEtAl:20a},
+  title = {Interacting {{Langevin Diffusions}}: {{Gradient Structure}} and {{Ensemble Kalman Sampler}}},
+  shorttitle = {Interacting {{Langevin Diffusions}}},
+  year = {2020},
+  journal = {SIAM J. Appl. Dyn. Syst.},
+  volume = {19},
+  number = {1},
+  eprint = {1903.08866},
+  eprinttype = {arxiv},
+  pages = {412--441},
+  publisher = {{Society for Industrial and Applied Mathematics}},
+  doi = {10.1137/19M1251655},
+  abstract = {Solving inverse problems without the use of derivatives or adjoints of the forward model is highly desirable in many applications arising in science and engineering. In this paper we propose a new version of such a methodology, a framework for its analysis, and numerical evidence of the practicality of the method proposed. Our starting point is an ensemble of overdamped Langevin diffusions which interact through a single preconditioner computed as the empirical ensemble covariance. We demonstrate that the nonlinear Fokker--Planck equation arising from the mean-field limit of the associated stochastic differential equation (SDE) has a novel gradient flow structure, built on the Wasserstein metric and the covariance matrix of the noisy flow. Using this structure, we investigate large time properties of the Fokker--Planck equation, showing that its invariant measure coincides with that of a single Langevin diffusion, and demonstrating exponential convergence to the invariant measure in a number of settings. We introduce a new noisy variant on ensemble Kalman inversion (EKI) algorithms found from the original SDE by replacing exact gradients with ensemble differences; this defines the ensemble Kalman sampler (EKS). Numerical results are presented which demonstrate its efficacy as a derivative-free approximate sampler for the Bayesian posterior arising from inverse problems.},
+  archiveprefix = {arXiv},
+  keywords = {Important},
+  file = {/Users/tsj/Documents/Zotero/storage/M2SS88GH/Interacting Langevin Diffusions-Garbuno-Inigo et al-2020.pdf},
+  author = {{Garbuno-Inigo}, A. and Hoffmann, F. and Li, W. and Stuart, A. M.}
+}
+% == BibTeX quality report for Garbuno-InigoEtAl:20:
+% ? Possibly abbreviated journal title SIAM J. Appl. Dyn. Syst.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("epubs.siam.org (Atypon)")
+% ? unused Publication title ("SIAM Journal on Applied Dynamical Systems")
+% ? unused Url ("https://epubs.siam.org/doi/abs/10.1137/19M1251655")
+
+@article{GritsunLucarini:17,
+  title = {Fluctuations, Response, and Resonances in a Simple Atmospheric Model},
+  year = {2017},
+  journal = {Physica D: Nonlinear Phenomena},
+  volume = {349},
+  pages = {62--76},
+  issn = {0167-2789},
+  doi = {10.1016/j.physd.2017.02.015},
+  abstract = {We study the response of a simple quasi-geostrophic barotropic model of the atmosphere to various classes of perturbations affecting its forcing and its dissipation using the formalism of the Ruelle response theory. We investigate the geometry of such perturbations by constructing the covariant Lyapunov vectors of the unperturbed system and discover in one specific case\textendash orographic forcing\textendash a substantial projection of the forcing onto the stable directions of the flow. This results into a resonant response shaped as a Rossby-like wave that has no resemblance to the unforced variability in the same range of spatial and temporal scales. Such a climatic surprise corresponds to a violation of the fluctuation\textendash dissipation theorem, in agreement with the basic tenets of nonequilibrium statistical mechanics. The resonance can be attributed to a specific group of rarely visited unstable periodic orbits of the unperturbed system. Our results reinforce the idea of using basic methods of nonequilibrium statistical mechanics and high-dimensional chaotic dynamical systems to approach the problem of understanding climate dynamics.},
+  langid = {english},
+  keywords = {Interesting},
+  file = {/Users/tsj/Documents/Zotero/storage/LX9QVTLX/Fluctuations, response, and resonances in a-Gritsun_Lucarini-2017.pdf},
+  author = {Gritsun, A. and Lucarini, V.}
+}
+% == BibTeX quality report for GritsunLucarini:17:
+% ? unused Library catalog ("ScienceDirect")
+% ? unused Url ("https://www.sciencedirect.com/science/article/pii/S0167278916301907")
+
+@article{HowlandEtAl:21,
+  title = {Parameter Uncertainty Quantification in an Idealized {{GCM}} with a Seasonal Cycle},
+  year = {2021},
+  journal = {ArXiv210800827 Phys.},
+  eprint = {2108.00827},
+  eprinttype = {arxiv},
+  primaryclass = {physics},
+  url = {http://arxiv.org/abs/2108.00827},
+  urldate = {2021-11-12},
+  abstract = {Climate models are generally calibrated manually by comparing selected climate statistics, such as the global top-of-atmosphere energy balance, to observations. The manual tuning only targets a limited subset of observational data and parameters. Bayesian calibration can estimate climate model parameters and their uncertainty using a larger fraction of the available data and automatically exploring the parameter space more broadly. In Bayesian learning, it is natural to exploit the seasonal cycle, which has large amplitude, compared with anthropogenic climate change, in many climate statistics. In this study, we develop methods for the calibration and uncertainty quantification (UQ) of model parameters exploiting the seasonal cycle, and we demonstrate a proof-of-concept with an idealized general circulation model (GCM). Uncertainty quantification is performed using the calibrate-emulate-sample approach, which combines stochastic optimization and machine learning emulation to speed up Bayesian learning. The methods are demonstrated in a perfect-model setting through the calibration and UQ of a convective parameterization in an idealized GCM with a seasonal cycle. Calibration and UQ based on seasonally averaged climate statistics, compared to annually averaged, reduces the calibration error by up to an order of magnitude and narrows the spread of posterior distributions by factors between two and five, depending on the variables used for UQ. The reduction in the size of the parameter posterior distributions leads to a reduction in the uncertainty of climate model predictions.},
+  archiveprefix = {arXiv},
+  keywords = {⛔ No DOI found,Important},
+  file = {/Users/tsj/Documents/Zotero/storage/VEYM2TNW/Parameter uncertainty quantification in an-Howland et al-2021.pdf},
+  author = {Howland, M. F. and Dunbar, O. R. A. and Schneider, T.}
+}
+% == BibTeX quality report for HowlandEtAl:21:
+% ? Possibly abbreviated journal title ArXiv210800827 Phys.
+% ? unused Publication title ("arXiv:2108.00827 [physics]")
+
+@article{HuangEtAl:21,
+  title = {Unscented {{Kalman Inversion}}},
+  year = {2021},
+  journal = {ArXiv210201580 Cs Math},
+  eprint = {2102.01580},
+  eprinttype = {arxiv},
+  primaryclass = {cs, math},
+  url = {http://arxiv.org/abs/2102.01580},
+  urldate = {2021-07-20},
+  abstract = {A useful approach to solve inverse problems is to pair the parameter-to-data map with a stochastic dynamical system for the parameter, and then employ techniques from filtering to estimate the parameter given the data. Three classical approaches to filtering of nonlinear systems are the extended, ensemble and unscented Kalman filters. The extended Kalman inversion (ExKI) is impractical when the forward map is not readily differentiable and given as a black box, and also for high dimensional parameter spaces because of the need to propagate large covariance matrices. Ensemble Kalman inversion (EKI) has emerged as a useful tool which overcomes both of these issues: it is derivative free and works with a low-rank covariance approximation formed from the ensemble. In this paper, we demonstrate that unscented Kalman methods also provide an effective tool for derivative-free inversion in the setting of black-box forward models, introducing unscented Kalman inversion (UKI). Theoretical analysis is provided for linear inverse problems, and a smoothing property of the data mis-fit under the unscented transform is explained. We provide numerical experiments, including various applications: learning subsurface flow permeability parameters; learning the structure damage field; learning the Navier-Stokes initial condition; and learning subgrid-scale parameters in a general circulation model. The theory and experiments show that the UKI outperforms the EKI on parameter learning problems with moderate numbers of parameters and outperforms the ExKI on problems where the forward model is not readily differentiable, or where the derivative is very sensitive. In particular, UKI based methods are of particular value for parameter estimation problems in which the number of parameters is moderate but the forward model is expensive and provided as a black box which is impractical to differentiate.},
+  archiveprefix = {arXiv},
+  keywords = {⛔ No DOI found,Important},
+  file = {/Users/tsj/Documents/Zotero/storage/KADGIHM5/Unscented Kalman Inversion-Huang et al-2021.pdf},
+  author = {Huang, D. Z. and Schneider, T. and Stuart, A. M.}
+}
+% == BibTeX quality report for HuangEtAl:21:
+% ? Title looks like it was stored in title-case in Zotero
+
+@article{IglesiasEtAl:13,
+  title = {The {{Ensemble Kalman Filter}} for {{Inverse Problems}}},
+  year = {2013},
+  journal = {Inverse Problems},
+  volume = {29},
+  number = {4},
+  eprint = {1209.2736},
+  eprinttype = {arxiv},
+  pages = {045001},
+  issn = {0266-5611, 1361-6420},
+  doi = {10.1088/0266-5611/29/4/045001},
+  abstract = {The Ensemble Kalman filter (EnKF) was introduced by Evensen in 1994 [10] as a novel method for data assimilation: state estimation for noisily observed time-dependent problems. Since that time it has had enormous impact in many application domains because of its robustness and ease of implementation, and numerical evidence of its accuracy. In this paper we propose the application of an iterative ensemble Kalman method for the solution of a wide class of inverse problems. In this context we show that the estimate of the unknown function that we obtain with the ensemble Kalman method lies in a subspace A spanned by the initial ensemble. Hence the resulting error may be bounded above by the error found from the best approximation in this subspace. We provide numerical experiments which compare the error incurred by the ensemble Kalman method for inverse problems with the error of the best approximation in A, and with variants on traditional least-squares approaches, restricted to the subspace A. In so doing we demonstrate that the ensemble Kalman method for inverse problems provides a derivative-free optimization method with comparable accuracy to that achieved by traditional least-squares approaches. Furthermore, we also demonstrate that the accuracy is of the same order of magnitude as that achieved by the best approximation. Three examples are used to demonstrate these assertions: inversion of a compact linear operator; inversion of piezometric head to determine hydraulic conductivity in a Darcy model of groundwater flow; and inversion of Eulerian velocity measurements at positive times to determine the initial condition in an incompressible fluid.},
+  archiveprefix = {arXiv},
+  keywords = {Important},
+  file = {/Users/tsj/Documents/Zotero/storage/HRT2JRK8/The Ensemble Kalman Filter for Inverse Problems-Iglesias et al-2013.pdf},
+  author = {Iglesias, M. A. and Law, K. J. H. and Stuart, A. M.}
+}
+% == BibTeX quality report for IglesiasEtAl:13:
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Url ("http://arxiv.org/abs/1209.2736")
+
+@incollection{JordanEtAl:98,
+  title = {An {{Introduction}} to {{Variational Methods}} for {{Graphical Models}}},
+  booktitle = {Learning in {{Graphical Models}}},
+  year = {1998},
+  series = {{{NATO ASI Series}}},
+  pages = {105--161},
+  publisher = {{Springer Netherlands}},
+  address = {{Dordrecht}},
+  doi = {10.1007/978-94-011-5014-9_5},
+  abstract = {This paper presents a tutorial introduction to the use of variational methods for inference and learning in graphical models. We present a number of examples of graphical models, including the QMR-DT database, the sigmoid belief network, the Boltzmann machine, and several variants of hidden Markov models, in which it is infeasible to run exact inference algorithms. We then introduce variational methods, showing how upper and lower bounds can be found for local probabilities, and discussing methods for extending these bounds to bounds on global probabilities of interest. Finally we return to the examples and demonstrate how variational algorithms can be formulated in each case.},
+  isbn = {978-94-011-5014-9},
+  langid = {english},
+  keywords = {_tablet},
+  file = {/Users/tsj/Documents/Zotero/storage/PHMF427H/An Introduction to Variational Methods for-Jordan et al-1998.pdf},
+  author = {Jordan, M. I. and Ghahramani, Z. and Jaakkola, T. S. and Saul, L. K.},
+  editor = {Jordan, M. I.}
+}
+% == BibTeX quality report for JordanEtAl:98:
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("Springer Link")
+% ? unused Url ("https://doi.org/10.1007/978-94-011-5014-9_5")
+
+@article{KobyzevEtAl:21,
+  title = {Normalizing {{Flows}}: {{An Introduction}} and {{Review}} of {{Current Methods}}},
+  shorttitle = {Normalizing {{Flows}}},
+  year = {2021},
+  journal = {IEEE Trans. Pattern Anal. Mach. Intell.},
+  volume = {43},
+  number = {11},
+  pages = {3964--3979},
+  issn = {1939-3539},
+  doi = {10.1109/TPAMI.2020.2992934},
+  abstract = {Normalizing Flows are generative models which produce tractable distributions where both sampling and density evaluation can be efficient and exact. The goal of this survey article is to give a coherent and comprehensive review of the literature around the construction and use of Normalizing Flows for distribution learning. We aim to provide context and explanation of the models, review current state-of-the-art literature, and identify open questions and promising future directions.},
+  keywords = {Review},
+  file = {/Users/tsj/Documents/Zotero/storage/YCTMPKMS/Normalizing Flows-Kobyzev et al-2021.pdf},
+  author = {Kobyzev, I. and Prince, S. J.D. and Brubaker, M. A.}
+}
+% == BibTeX quality report for KobyzevEtAl:21:
+% ? Possibly abbreviated journal title IEEE Trans. Pattern Anal. Mach. Intell.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Conference name ("IEEE Transactions on Pattern Analysis and Machine Intelligence")
+% ? unused Library catalog ("IEEE Xplore")
+% ? unused Publication title ("IEEE Transactions on Pattern Analysis and Machine Intelligence")
+
+@article{Leith:75,
+  title = {Climate {{Response}} and {{Fluctuation Dissipation}}},
+  year = {1975},
+  journal = {J. Atmospheric Sci.},
+  volume = {32},
+  number = {10},
+  pages = {2022--2026},
+  publisher = {{American Meteorological Society}},
+  issn = {0022-4928, 1520-0469},
+  doi = {10.1175/1520-0469(1975)032<2022:CRAFD>2.0.CO;2},
+  abstract = {{$<$}section class="abstract"{$><$}h2 class="abstractTitle text-title my-1" id="d1457e2"{$>$}Abstract{$<$}/h2{$><$}p{$>$}The fluctuation-dissipation theorem of statistical mechanics, proved in this note for a system with two quadratic integrals of motion such as that of two-dimensional or geostrophic turbulence, relates, the mean response to impulsive external forcing of a dynamical system to its natural unforced variability. The utility of this theorem in providing an estimate of the response of climatic means to changing external influences is discussed.{$<$}/p{$><$}/section{$>$}},
+  chapter = {Journal of the Atmospheric Sciences},
+  langid = {english},
+  keywords = {unsrt,unsrt-2021-02-06},
+  file = {/Users/tsj/Documents/Zotero/storage/HKV7BTNF/Climate Response and Fluctuation Dissipation-Leith-1975.pdf},
+  author = {Leith, C. E.}
+}
+% == BibTeX quality report for Leith:75:
+% ? Possibly abbreviated journal title J. Atmospheric Sci.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("journals.ametsoc.org")
+% ? unused Url ("https://journals.ametsoc.org/view/journals/atsc/32/10/1520-0469_1975_032_2022_crafd_2_0_co_2.xml")
+
+@book{MacKay:03,
+  ids = {MacKay:12},
+  title = {Information {{Theory}}, {{Inference}} and {{Learning Algorithms}}},
+  year = {2003},
+  publisher = {{Cambridge University Press}},
+  abstract = {Information theory and inference, often taught separately, are here united in one entertaining textbook. These topics lie at the heart of many exciting areas of contemporary science and engineering - communication, signal processing, data mining, machine learning, pattern recognition, computational neuroscience, bioinformatics, and cryptography. This textbook introduces theory in tandem with applications. Information theory is taught alongside practical communication systems, such as arithmetic coding for data compression and sparse-graph codes for error-correction. A toolbox of inference techniques, including message-passing algorithms, Monte Carlo methods, and variational approximations, are developed alongside applications of these tools to clustering, convolutional codes, independent component analysis, and neural networks. The final part of the book describes the state of the art in error-correcting codes, including low-density parity-check codes, turbo codes, and digital fountain codes -- the twenty-first century standards for satellite communications, disk drives, and data broadcast. Richly illustrated, filled with worked examples and over 400 exercises, some with detailed solutions, David MacKay's groundbreaking book is ideal for self-learning and for undergraduate or graduate courses. Interludes on crosswords, evolution, and sex provide entertainment along the way. In sum, this is a textbook on information, communication, and coding for a new generation of students, and an unparalleled entry point into these subjects for professionals in areas as diverse as computational biology, financial engineering, and machine learning.},
+  googlebooks = {AKuMj4PN\_EMC},
+  isbn = {978-0-521-64298-9},
+  langid = {english},
+  file = {/Users/tsj/Documents/Zotero/storage/VKFPHPQQ/Information Theory, Inference and Learning Algorithms-MacKay-2012.pdf},
+  author = {MacKay, D. J. C.}
+}
+% == BibTeX quality report for MacKay:03:
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("Google Books")
+% ? unused Number of pages ("694")
+
+@article{MacKay:92,
+  title = {Bayesian {{Interpolation}}},
+  year = {1992},
+  journal = {Neural Computation},
+  volume = {4},
+  number = {3},
+  pages = {415--447},
+  issn = {0899-7667},
+  doi = {10.1162/neco.1992.4.3.415},
+  abstract = {Although Bayesian analysis has been in use since Laplace, the Bayesian method of model-comparison has only recently been developed in depth. In this paper, the Bayesian approach to regularization and model-comparison is demonstrated by studying the inference problem of interpolating noisy data. The concepts and methods described are quite general and can be applied to many other data modeling problems. Regularizing constants are set by examining their posterior probability distribution. Alternative regularizers (priors) and alternative basis sets are objectively compared by evaluating the evidence for them. ``Occam's razor'' is automatically embodied by this process. The way in which Bayes infers the values of regularizing constants and noise levels has an elegant interpretation in terms of the effective number of parameters determined by the data set. This framework is due to Gull and Skilling.},
+  file = {/Users/tsj/Documents/Zotero/storage/ZXZEB5BZ/Bayesian Interpolation-MacKay-1992.pdf},
+  author = {MacKay, D. J. C.}
+}
+% == BibTeX quality report for MacKay:92:
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("Silverchair")
+% ? unused Url ("https://doi.org/10.1162/neco.1992.4.3.415")
+
+@article{Mackay:95,
+  title = {Probable Networks and Plausible Predictions \textemdash{} a Review of Practical {{Bayesian}} Methods for Supervised Neural Networks},
+  year = {1995},
+  journal = {Network},
+  volume = {6},
+  number = {3},
+  pages = {469--505},
+  publisher = {{Informa UK Limited}},
+  issn = {0954-898X},
+  doi = {10.1088/0954-898X/6/3/011},
+  abstract = {Bayesian probability theory provides a unifying framework for data modelling. In this framework the overall aims are to find models that are well matched to the data, and to use these models to make optimal predictions. Neural network learning is interpreted as an inference of the most probable parameters for the model, given the training data. The search in model space (i.e., the space of architectures, noise models, preprocessings, regularizers and weight decay constants) can then also be treated as an inference problem, in which we infer the relative probability of alternative models, given the data. The article describes practical techniques based on Gaussian approximations for implementation of these powerful methods for controlling, comparing and using adaptive networks.},
+  langid = {english},
+  file = {/Users/tsj/Documents/Zotero/storage/TZYVCVMJ/Probable networks and plausible predictions — a-Mackay-1995.pdf},
+  author = {Mackay, D. J. C.}
+}
+% == BibTeX quality report for Mackay:95:
+% ? unused Library catalog ("Institute of Physics")
+% ? unused Publication title ("Network: Computation in Neural Systems")
+% ? unused Url ("https://doi.org/10.1088/0954-898x_6_3_011")
+
+@article{MajdaEtAl:10,
+  title = {Low-{{Frequency Climate Response}} and {{Fluctuation}}\textendash{{Dissipation Theorems}}: {{Theory}} and {{Practice}}},
+  shorttitle = {Low-{{Frequency Climate Response}} and {{Fluctuation}}\textendash{{Dissipation Theorems}}},
+  year = {2010},
+  journal = {J. Atmospheric Sci.},
+  volume = {67},
+  number = {4},
+  pages = {1186--1201},
+  publisher = {{American Meteorological Society}},
+  issn = {0022-4928, 1520-0469},
+  doi = {10.1175/2009JAS3264.1},
+  abstract = {{$<$}section class="abstract"{$><$}h2 class="abstractTitle text-title my-1" id="d441e2"{$>$}Abstract{$<$}/h2{$><$}p{$>$}The low-frequency response to changes in external forcing or other parameters for various components of the climate system is a central problem of contemporary climate change science. The fluctuation\textendash dissipation theorem (FDT) is an attractive way to assess climate change by utilizing statistics of the present climate; with systematic approximations, it has been shown recently to have high skill for suitable regimes of an atmospheric general circulation model (GCM). Further applications of FDT to low-frequency climate response require improved approximations for FDT on a reduced subspace of resolved variables. Here, systematic mathematical principles are utilized to develop new FDT approximations on reduced subspaces and to assess the small yet significant departures from Gaussianity in low-frequency variables on the FDT response. Simplified test models mimicking crucial features in GCMs are utilized here to elucidate these issues and various FDT approximations in an unambiguous fashion. Also, the shortcomings of alternative ad hoc procedures for FDT in the recent literature are discussed here. In particular, it is shown that linear regression stochastic models for the FDT response always have no skill for a general nonlinear system for the variance response and can have poor or moderate skill for the mean response depending on the regime of the Lorenz 40-model and the details of the regression strategy. New nonlinear stochastic FDT approximations for a reduced set of variables are introduced here with significant skill in capturing the effect of subtle departures from Gaussianity in the low-frequency response for a reduced set of variables.{$<$}/p{$><$}/section{$>$}},
+  chapter = {Journal of the Atmospheric Sciences},
+  langid = {english},
+  keywords = {To_read},
+  file = {/Users/tsj/Documents/Zotero/storage/BJS3R3JC/Low-Frequency Climate Response and-Majda et al-2010.pdf},
+  author = {Majda, A. J. and Gershgorin, B. and Yuan, Y.}
+}
+% == BibTeX quality report for MajdaEtAl:10:
+% ? Possibly abbreviated journal title J. Atmospheric Sci.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("journals.ametsoc.org")
+% ? unused Url ("https://journals.ametsoc.org/view/journals/atsc/67/4/2009jas3264.1.xml")
+
+@article{MajdaQi:18,
+  title = {Strategies for {{Reduced-Order Models}} for {{Predicting}} the {{Statistical Responses}} and {{Uncertainty Quantification}} in {{Complex Turbulent Dynamical Systems}}},
+  year = {2018},
+  journal = {SIAM Rev.},
+  volume = {60},
+  number = {3},
+  pages = {491--549},
+  publisher = {{Society for Industrial and Applied Mathematics}},
+  issn = {0036-1445},
+  doi = {10.1137/16M1104664},
+  abstract = {Turbulent dynamical systems characterized by both a high-dimensional phase space and a large number of instabilities are ubiquitous among many complex systems in science and engineering, including climate, material, and neural science. The existence of a strange attractor in the turbulent systems containing a large number of positive Lyapunov exponents results in the rapid growth of small uncertainties from imperfect modeling equations or perturbations in initial values, naturally requiring a probabilistic characterization for the evolution of the turbulent system. Uncertainty quantification (UQ) in turbulent dynamical systems is a grand challenge whose goal is to obtain statistical estimates such as the change in mean and variance for key physical quantities in their nonlinear responses to changes in external forcing parameters or uncertain initial data. In the development of a proper UQ scheme for systems of high or infinite dimensionality with instabilities, significant model errors compared with the true natural signal are always unavoidable due to both the imperfect understanding of the underlying physical processes and the limited computational resources available through direct Monte Carlo integration. One central issue in contemporary research is the development of a systematic methodology that can recover the crucial features of the natural system in statistical equilibrium (model fidelity) and improve the imperfect model prediction skill in response to various external perturbations (model sensitivity). \textbackslash indent A general mathematical framework to construct statistically accurate reduced-order models that have skill in capturing the statistical variability in the principal directions with largest energy of a general class of damped and forced complex turbulent dynamical systems is discussed here. There are generally three stages in the modeling strategy: imperfect model selection, calibration of the imperfect model in a training phase, and prediction of the responses with UQ to a wide class of forcing and perturbation scenarios. The methods are developed under a universal class of turbulent dynamical systems with quadratic nonlinearity that is representative in many applications in applied mathematics and engineering. Several mathematical ideas will be introduced to improve the prediction skill of the imperfect reduced-order models. Most importantly, empirical information theory and statistical linear response theory are applied in the training phase for calibrating model errors to achieve optimal imperfect model parameters, and total statistical energy dynamics are introduced to improve the model sensitivity of the prediction phase, especially when strong external perturbations are exerted. The validity of the general framework of reduced-order models is demonstrated on instructive stochastic triad models. Recent applications to two-layer baroclinic turbulence in the atmosphere and ocean with combinations of turbulent jets and vortices are also surveyed. The UQ and statistical response for these complex models are accurately captured by the reduced-order models with only \$2\textbackslash times10\^\{2\}\$ modes in a highly turbulent system with \$1\textbackslash times10\^\{5\}\$ degrees of freedom. Less than 0.15\% of the total spectral modes are needed in the reduced-order models.},
+  keywords = {Interesting,Review},
+  file = {/Users/tsj/Documents/Zotero/storage/BCNXU92V/Strategies for Reduced-Order Models for-Majda_Qi-2018.pdf},
+  author = {Majda, A. J. and Qi, D.}
+}
+% == BibTeX quality report for MajdaQi:18:
+% ? Possibly abbreviated journal title SIAM Rev.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("epubs.siam.org (Atypon)")
+% ? unused Publication title ("SIAM Review")
+% ? unused Url ("https://epubs.siam.org/doi/abs/10.1137/16M1104664")
+
+@article{PapamakariosEtAl:21,
+  title = {Normalizing {{Flows}} for {{Probabilistic Modeling}} and {{Inference}}},
+  year = {2021},
+  journal = {J. Mach. Learn. Res.},
+  volume = {22},
+  number = {57},
+  eprint = {1912.02762},
+  eprinttype = {arxiv},
+  pages = {1--64},
+  issn = {1533-7928},
+  url = {http://jmlr.org/papers/v22/19-1028.html},
+  urldate = {2022-02-16},
+  abstract = {Normalizing flows provide a general mechanism for defining expressive probability distributions, only requiring the specification of a (usually simple) base distribution and a series of bijective transformations. There has been much recent work on normalizing flows, ranging from improving their expressive power to expanding their application. We believe the field has now matured and is in need of a unified perspective. In this review, we attempt to provide such a perspective by describing flows through the lens of probabilistic modeling and inference. We place special emphasis on the fundamental principles of flow design, and discuss foundational topics such as expressive power and computational trade-offs. We also broaden the conceptual framing of flows by relating them to more general probability transformations. Lastly, we summarize the use of flows for tasks such as generative modeling, approximate inference, and supervised learning.},
+  archiveprefix = {arXiv},
+  keywords = {⛔ No DOI found,Review},
+  file = {/Users/tsj/Documents/Zotero/storage/K4BR9GJN/Normalizing Flows for Probabilistic Modeling and-Papamakarios et al-2021.pdf},
+  author = {Papamakarios, G. and Nalisnick, E. and Rezende, D. J. and Mohamed, S. and Lakshminarayanan, B.}
+}
+% == BibTeX quality report for PapamakariosEtAl:21:
+% ? Possibly abbreviated journal title J. Mach. Learn. Res.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("jmlr.org")
+% ? unused Publication title ("Journal of Machine Learning Research")
+
+@article{PesonenEtAl:21,
+  title = {{{ABC}} of the {{Future}}},
+  year = {2021},
+  journal = {ArXiv211212841 Stat},
+  eprint = {2112.12841},
+  eprinttype = {arxiv},
+  primaryclass = {stat},
+  url = {http://arxiv.org/abs/2112.12841},
+  urldate = {2022-02-21},
+  abstract = {Approximate Bayesian computation (ABC) has advanced in two decades from a seminal idea to a practically applicable inference tool for simulator-based statistical models, which are becoming increasingly popular in many research domains. The computational feasibility of ABC for practical applications has been recently boosted by adopting techniques from machine learning to build surrogate models for the approximate likelihood or posterior and by the introduction of a general-purpose software platform with several advanced features, including automated parallelization. Here we demonstrate the strengths of the advances in ABC by going beyond the typical benchmark examples and considering real applications in astronomy, infectious disease epidemiology, personalised cancer therapy and financial prediction. We anticipate that the emerging success of ABC in producing actual added value and quantitative insights in the real world will continue to inspire a plethora of further applications across different fields of science, social science and technology.},
+  archiveprefix = {arXiv},
+  keywords = {⛔ No DOI found},
+  file = {/Users/tsj/Documents/Zotero/storage/ZCDB85QT/ABC of the Future-Pesonen et al-2021.pdf},
+  author = {Pesonen, H. and Simola, U. and {K{\"o}hn-Luque}, A. and Vuollekoski, H. and Lai, X. and Frigessi, A. and Kaski, S. and Frazier, D. T. and Maneesoonthorn, W. and Martin, G. M. and Corander, J.}
+}
+% == BibTeX quality report for PesonenEtAl:21:
+% ? Title looks like it was stored in title-case in Zotero
+
+@article{SchillingsStuart:17,
+  ids = {SchillingsStuart:17a},
+  title = {Analysis of the {{Ensemble Kalman Filter}} for {{Inverse Problems}}},
+  year = {2017},
+  journal = {SIAM J. Numer. Anal.},
+  volume = {55},
+  number = {3},
+  pages = {1264--1290},
+  publisher = {{Society for Industrial and Applied Mathematics}},
+  issn = {0036-1429},
+  doi = {10.1137/16M105959X},
+  abstract = {The ensemble Kalman filter (EnKF) is a widely used methodology for state estimation in partially, noisily observed dynamical systems and for parameter estimation in inverse problems. Despite its widespread use in the geophysical sciences, and its gradual adoption in many other areas of application, analysis of the method is in its infancy. Furthermore, much of the existing analysis deals with the large ensemble limit, far from the regime in which the method is typically used. The goal of this paper is to analyze the method when applied to inverse problems with fixed ensemble size. A continuous time limit is derived and the long-time behavior of the resulting dynamical system is studied.  Most of the rigorous analysis is confined to the linear forward problem, where we demonstrate that the continuous time limit of the EnKF corresponds to a set of gradient flows for the data misfit in each ensemble member, coupled through a common preconditioner which is the empirical covariance matrix of the ensemble. Numerical results demonstrate that the conclusions of the analysis extend beyond the linear inverse problem setting. Numerical experiments are also given which demonstrate the benefits of various extensions of the basic methodology.},
+  keywords = {Interesting},
+  file = {/Users/tsj/Documents/Zotero/storage/BX7Z78CI/Analysis of the Ensemble Kalman Filter for-Schillings_Stuart-2017.pdf},
+  author = {Schillings, C. and Stuart, A. M.}
+}
+% == BibTeX quality report for SchillingsStuart:17:
+% ? Possibly abbreviated journal title SIAM J. Numer. Anal.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("epubs.siam.org (Atypon)")
+% ? unused Publication title ("SIAM Journal on Numerical Analysis")
+% ? unused Url ("https://epubs.siam.org/doi/abs/10.1137/16M105959X")
+
+@article{SchneiderEtAl:20a,
+  ids = {SchneiderEtAl:20b},
+  title = {Ensemble {{Kalman Inversion}} for {{Sparse Learning}} of {{Dynamical Systems}} from {{Time-Averaged Data}}},
+  year = {2020},
+  journal = {ArXiv200706175 Math},
+  eprint = {2007.06175},
+  eprinttype = {arxiv},
+  primaryclass = {math},
+  url = {http://arxiv.org/abs/2007.06175},
+  urldate = {2021-02-01},
+  abstract = {Enforcing sparse structure within learning has led to significant advances in the field of data-driven discovery of dynamical systems. However, such methods require access not only to time-series of the state of the dynamical system, but also to the time derivative. In many applications, the data are available only in the form of time-averages such as moments and autocorrelation functions. We propose a sparse learning methodology to discover the vector fields defining a (possibly stochastic or partial) differential equation, using only time-averaged statistics. Such a formulation of sparse learning naturally leads to a nonlinear inverse problem to which we apply the methodology of ensemble Kalman inversion (EKI). EKI is chosen because it may be formulated in terms of the iterative solution of quadratic optimization problems; sparsity is then easily imposed. We then apply the EKI-based sparse learning methodology to various examples governed by stochastic differential equations (a noisy Lorenz 63 system), ordinary differential equations (Lorenz 96 system and coalescence equations), and a partial differential equation (the Kuramoto-Sivashinsky equation). The results demonstrate that time-averaged statistics can be used for data-driven discovery of differential equations using sparse EKI. The proposed sparse learning methodology extends the scope of data-driven discovery of differential equations to previously challenging applications and data-acquisition scenarios.},
+  archiveprefix = {arXiv},
+  keywords = {⛔ No DOI found,Important},
+  file = {/Users/tsj/Documents/Zotero/storage/PJ6BR6MG/Ensemble Kalman Inversion for Sparse Learning of-Schneider et al-2020.pdf;/Users/tsj/Documents/Zotero/storage/W6TA5FXK/Ensemble Kalman Inversion for Sparse Learning of-Schneider et al-2020.pdf},
+  author = {Schneider, T. and Stuart, A. M. and Wu, J.-L.}
+}
+% == BibTeX quality report for SchneiderEtAl:20a:
+% ? Title looks like it was stored in title-case in Zotero
+
+@article{Stuart:10,
+  ids = {Stuart:10a},
+  title = {Inverse Problems: {{A Bayesian}} Perspective},
+  shorttitle = {Inverse Problems},
+  year = {2010},
+  journal = {Acta Numer.},
+  volume = {19},
+  pages = {451--559},
+  publisher = {{Cambridge University Press}},
+  issn = {1474-0508, 0962-4929},
+  doi = {10.1017/S0962492910000061},
+  abstract = {The subject of inverse problems in differential equations is of enormous practical importance, and has also generated substantial mathematical and computational innovation. Typically some form of regularization is required to ameliorate ill-posed behaviour. In this article we review the Bayesian approach to regularization, developing a function space viewpoint on the subject. This approach allows for a full characterization of all possible solutions, and their relative probabilities, whilst simultaneously forcing significant modelling issues to be addressed in a clear and precise fashion. Although expensive to implement, this approach is starting to lie within the range of the available computational resources in many application areas. It also allows for the quantification of uncertainty and risk, something which is increasingly demanded by these applications. Furthermore, the approach is conceptually important for the understanding of simpler, computationally expedient approaches to inverse problems.},
+  langid = {english},
+  file = {/Users/tsj/Documents/Zotero/storage/Y9TVX4A4/Inverse problems-Stuart-2010.pdf},
+  author = {Stuart, A. M.}
+}
+% == BibTeX quality report for Stuart:10:
+% ? Possibly abbreviated journal title Acta Numer.
+% ? unused Publication title ("Acta Numerica")
+% ? unused Url ("https://www.cambridge.org/core/journals/acta-numerica/article/inverse-problems-a-bayesian-perspective/587A3A0D480A1A7C2B1B284BCEDF7E23")
+
+@article{UmEtAl:21,
+  title = {Solver-in-the-{{Loop}}: {{Learning}} from {{Differentiable Physics}} to {{Interact}} with {{Iterative PDE-Solvers}}},
+  shorttitle = {Solver-in-the-{{Loop}}},
+  year = {2021},
+  journal = {ArXiv200700016 Phys.},
+  eprint = {2007.00016},
+  eprinttype = {arxiv},
+  primaryclass = {physics},
+  url = {http://arxiv.org/abs/2007.00016},
+  urldate = {2021-07-08},
+  abstract = {Finding accurate solutions to partial differential equations (PDEs) is a crucial task in all scientific and engineering disciplines. It has recently been shown that machine learning methods can improve the solution accuracy by correcting for effects not captured by the discretized PDE. We target the problem of reducing numerical errors of iterative PDE solvers and compare different learning approaches for finding complex correction functions. We find that previously used learning approaches are significantly outperformed by methods that integrate the solver into the training loop and thereby allow the model to interact with the PDE during training. This provides the model with realistic input distributions that take previous corrections into account, yielding improvements in accuracy with stable rollouts of several hundred recurrent evaluation steps and surpassing even tailored supervised variants. We highlight the performance of the differentiable physics networks for a wide variety of PDEs, from non-linear advection-diffusion systems to three-dimensional Navier-Stokes flows.},
+  archiveprefix = {arXiv},
+  keywords = {⛔ No DOI found,unsrt,unsrt-2021-07-07},
+  file = {/Users/tsj/Documents/Zotero/storage/DP3DJCLF/Solver-in-the-Loop-Um et al-2021.pdf},
+  author = {Um, K. and Brand, R. and Yun and Fei and Holl, P. and Thuerey, N.}
+}
+% == BibTeX quality report for UmEtAl:21:
+% ? Possibly abbreviated journal title ArXiv200700016 Phys.
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Publication title ("arXiv:2007.00016 [physics]")
+
+@book{WainwrightJordan:08,
+  title = {Graphical {{Models}}, {{Exponential Families}}, and {{Variational Inference}}},
+  year = {2008},
+  volume = {1},
+  url = {https://www.nowpublishers.com/article/Details/MAL-001},
+  urldate = {2020-01-01},
+  abstract = {Graphical Models, Exponential Families, and Variational Inference},
+  langid = {english},
+  keywords = {_tablet},
+  file = {/Users/tsj/Documents/Zotero/storage/BY2GXAMF/Graphical Models, Exponential Families, and-Wainwright_Jordan-2008.pdf},
+  author = {Wainwright, M. J. and Jordan, M. I.}
+}
+% == BibTeX quality report for WainwrightJordan:08:
+% Missing required field 'publisher'
+% ? Title looks like it was stored in title-case in Zotero
+% ? unused Library catalog ("www.nowpublishers.com")
+
+
+% Required packages:
+% * textcomp
+
