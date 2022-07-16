@@ -1,7 +1,9 @@
 % !TEX TS-program = latexmk
+
+% partial fixes for ``cannot redefine operator''
 \let\negmedspace\undefined
 \let\negthickspace\undefined
-\RequirePackage{amsmath} % partial fix for ``cannot redefine operator''
+\RequirePackage{amsmath} 
 
 \documentclass[notitlepage,openany,11pt]{report}
 %\documentclass[11pt,oneside]{amsart}
@@ -9,6 +11,9 @@
 total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
 \usepackage[pdftex]{graphicx}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% fonts and encoding
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel} % hyphenation etc.
@@ -17,9 +22,7 @@ total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
 % \usepackage{times} % times font for text, not equations
 \usepackage{microtype} % kerning
 
-\usepackage[square,numbers,sort&compress]{natbib} % ,merge,elide
-
-
+% math
 \let\Bbbk\relax
 \let\openbox\relax
 %\usepackage{amsmath} % math
@@ -29,7 +32,25 @@ total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
 \DeclareMathOperator{\var}{var}
 \DeclareMathOperator{\cov}{cov}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% other packages
+\usepackage{adjmulticol} % 2-col for biblio
+\usepackage{indentfirst}
+\usepackage{enumitem}
+\setlist{noitemsep}
+\usepackage{tabularx}
+\usepackage{marginnote}
+\renewcommand*{\marginfont}{\footnotesize}
+
+% Draw box around projects
+\usepackage{framed}
+\theoremstyle{plain}% default
+\newtheorem{notethm}{Speculation}
+\newenvironment{notebox}
+    {\noindent\colorlet{shadecolor}{cyan!15}\begin{shaded}\begin{notethm}}
+    {\end{notethm}\end{shaded}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% chapter/section headings
 
 \usepackage{sectsty} % reduce font size for chapter headers
 \chapterfont{\LARGE}
@@ -43,34 +64,6 @@ total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
 \renewcommand{\cftsecfont}{\normalfont\bfseries}% titles in bold
 \renewcommand{\cftsecpagefont}{\normalfont\bfseries}% page numbers in bold
 % \renewcommand{\cftdotsep}{1}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\usepackage{adjmulticol} % 2-col for biblio
-\usepackage{indentfirst}
-\usepackage{enumitem}
-\usepackage{tabularx}
-\usepackage{xcolor}
-\definecolor{darkred}{rgb}{0.45,0.,0.}
-\definecolor{darkgreen}{rgb}{0.,0.45,0.}
-\definecolor{darkblue}{rgb}{0.,0.,0.5}
-\usepackage{framed}
-
-\usepackage[hyphens,obeyspaces]{url}
-\usepackage[%
-    breaklinks,colorlinks=true,
-    linkcolor=darkred,citecolor=darkgreen,urlcolor=darkblue,
-    backref=page
-]{hyperref}
-% \hypersetup{backref=page} % needs to be specified post-load?
-\usepackage{hypernat} % after hyperref and natbib
-%\PassOptionsToPackage{hyphens,obeyspaces}{url}
-\usepackage{doi} % needs to be after hyperref and url?
-\usepackage{marginnote}
-\renewcommand*{\marginfont}{\footnotesize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Number subsubsections for references, but don't put them in the TOC
 \setcounter{secnumdepth}{3} 
@@ -98,7 +91,27 @@ total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
 \newcommand*{\toccontents}{\@starttoc{toc}}
 \makeatother
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Biblio
+
+\usepackage[square,numbers,sort&compress]{natbib} % ,merge,elide
+
+\usepackage{xcolor}
+\definecolor{darkred}{rgb}{0.45,0.,0.}
+\definecolor{darkgreen}{rgb}{0.,0.45,0.}
+\definecolor{darkblue}{rgb}{0.,0.,0.5}
+
+\usepackage[hyphens,obeyspaces]{url}
+\usepackage[%
+    breaklinks,colorlinks=true,
+    linkcolor=darkred,citecolor=darkgreen,urlcolor=darkblue,
+    backref=page
+]{hyperref}
+% \hypersetup{backref=page} % needs to be specified post-load?
+\usepackage{hypernat} % after hyperref and natbib
+%\PassOptionsToPackage{hyphens,obeyspaces}{url}
+\usepackage{doi} % needs to be after hyperref and url?
+
 
 % Eliminate ``References'' header from \bibliography since
 % we put that in manually, because we want it in TOC
@@ -164,14 +177,8 @@ total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
     \fi%
 }
 
-% Draw box around projects
-\theoremstyle{plain}% default
-\newtheorem{notethm}{Note}
-\newenvironment{notebox}
-    {\noindent\colorlet{shadecolor}{cyan!15}\begin{shaded}\begin{notethm}}
-    {\end{notethm}\end{shaded}}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
 \newcommand {\be}{\begin{equation*}}
@@ -186,8 +193,8 @@ total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
 \newcommand{\mhat}[1]{\widehat{#1}}
 \newcommand{\mol}[1]{\overline{#1}}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \title{Background on machine learning, inference and control}
 \author{Tom Jackson}
@@ -1097,7 +1104,7 @@ u^{\ast} = \frac{1}{\widetilde{Z}} \int \! d\xi \, e^{-\frac{\widetilde{S}}{\lam
 \ee 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % References
 
 \clearpage
