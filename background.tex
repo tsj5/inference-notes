@@ -1124,93 +1124,101 @@ Ref: \cite{EysenbachEtAl:21a}; \href{https://ben-eysenbach.github.io/rpc/}{code}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Continuum formulations}
+\chapter{Inital write-up of handwritten notes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Probability}
+Keyword: \emph{approximate Bayesian computation}, when observations/likelihood evaluations are expensive. \emph{Active learning}/\emph{experimental design}, in that we want to plan likelihood evaluations to maximize information gained from each.
 
+\section{First batch}
 
-\subsection{Gaussian Processes}
+\subsection{Huan RL for experimental design}
 
-[...]
+``Passive POMDP'': Want actions to only change knowledge, not the observable.
 
+World dynamics $p(W_{t}| W_{t-1})$, $t$-indep. Agent \emph{memory} $q_{t}(M_{t}|M_{t-1}, O_{t})$. Noisy observations $\sigma(O_{t}| W_{t})$. Cost to be minimized: $\langle \tfrac{1}{N} \sum_{t} d(W_{t}, M_{t}) \rangle$. 
 
-\subsection{Lagrangians}
-(\href{http://math.mit.edu/classes/18.086/2006/am72.pdf}{ref} for this (Strang)). 
+Unbounded agent: let $M_{t}$ be belief state (about $W$, given \emph{all} $\{ O_{t} \}$, i.e. $M_{t} = B_{t}( W_{t} | \{ O_{t} \})$. Bayes update is
+\be
+B_{t}( W_{t} | \{ O_{t} \}) \propto \sum_{W_{t-1}} B_{t-1}( W_{t-1} | \{ O_{t-1} \})p(W_{t}| W_{t-1})\sigma(O_{t}| W_{t}).
+\ee
+(so Huan turns off dynamics for $W_{t} = \theta$; $\sigma(\cdot)$ is $y = G(\theta) + \eta$).
 
-Three forms for all calculus of variations problems:
+Versus Huan's terms: experiment index $k = 1 \ldots N$, belief state $X^{B}_{k}$, physical state $X_{k}$. Design $d_{k}$ is parameters for $k$th experiment, or policy $\pi_{k}(X_{k}) = d_{k}$. Observations $y_{k}$ taken to be $G_{k}( \theta, d_{k}) + \eta$, with static parameters $\theta$. Let $z_{k} = (y_{k}, d_{k})$, and $Z_{k}$ be the full history of $z$s up to experiment $k$.
+
+Can write Bellman for this. Reward/cost $g_{k}(x,y,d)$ with terminal $g_{N}(x_{N})$. Dynamical update $X_{k+1} = F_{k}(x,y,d)$.
+
+Bayes for $\theta$:
+\be
+p(\theta | Z_{k})  = \frac{p(y_{k} | \theta, d_{k}, Z_{k-1})}{p(y_{k}| d_{k}, Z_{k-1})}p(\theta | Z_{k-1}).
+\ee
+
+Set terminal reward to info we've gained from all experiments:
+\be
+g_{N} = D_{KL}[ p(\theta|Z_{N}) | p(\theta | \emptyset) ],
+\ee
+claim this means Bellman is non-convex? Each $g_{k}$ is the cost (in terms of resources) to run each experiment. 
+
+Then Bellman
+\be
+J_{k}(x_{k}) = \max_{d_{k}} \langle g_{k} + J_{k+1}(F) \rangle
+\ee
+\be
+\pi_{k}(x_{k}) = \arg \max_{d_{k}} Q_{k}(x,d).
+\ee
+(Cost-to-go $J_k$ is the ``critic''; $\pi$ is the ``actor.'') ``Model free'' since can go $Q \rightarrow \pi$ without explicit knowledge of $F$.
+
+\begin{notebox}
+Remarks:
 \begin{enumerate}
-\item Variational (optimization; here least action principle):
-\be
-\min_{x} \mcal{S}[x] = \min_{x} \left\{ \int \! dt \, \mcal{L}[t, x(t), \dot{x}(t)] \right\},
-\ee with Dirichlet BCs on endpoints $x(0)$, $x(T)$. 
-\item Weak form (here ``principle of virtual work''). Take any test function $y$, form $\mcal{S}[x+y] - \mcal{S}[x]$ and set term linear in $y$ to zero to express optimality. 
-\be
-\delta \mcal{S} = \int dt \, \left[ \frac{\partial \mcal{L}}{\partial x} \delta x  + \frac{\partial \mcal{L}}{\partial \dot{x}} \delta\dot{y} \right]= 0.
-\ee
-\item Strong form (here Euler-Lagrange equations): Integrate weak form by parts. Boundary conditions handle surface term.
-\be
-\frac{\partial \mcal{L}}{\partial x} - \frac{d}{dt} \frac{\partial \mcal{L}}{\partial \dot{x}} = 0.
-\ee
+\item Bring in Tishby stuff for dimensionality, instead of directly discretizing pdfs.
+\item How's $D_{KL}$ deal with singular models?
+\item In 2021 paper, get exploration via noise (sec. 3.2.4). Want to do this via entropy-like term in $g_{k}$.
+\item MINE-type estimators for $D_{KL}$.
+\item 2021 paper uses vanilla actor-critic; bring in soft actor-critic.
+\item Setting is for experimental design. What about optimization, i.e. ``find $\theta$ in best agreement with summary statistics''? Just tack on summary statistic and comparison into $G$? Could plug into CES: $\{ y_{k} \}$ are the summary statistics, $\{ d_{k} \}$ are the model parameters for each run.
 \end{enumerate}
-Even simpler matrix case (to motivate KKT et al): $\min_{u} \tfrac{1}{2} u' A u - u' b$; then $v' A u = v' b$ for any $v$, or $Au = f$.
+
+\end{notebox}
+
+\subsection{CES again}
 
 
-\section{Control}
+\begin{notebox}
+\begin{itemize}
+{}
+\item Issue with CES is that the stages don't ``know about'' each other, but do target max posterior density. Minimize cost of emulator evaluations for MCMC --- e.g. with random features. Dimensional reduction 1: only stuff for \emph{functions} of $y$: suffice to do $p(y|\theta)$? Or could compress $\theta \rightarrow y$ itself.
+\item ``C'' then separate ``S'' feels redundant. 
 
-\subsection{Bellman 2}
-(\href{https://math.stackexchange.com/questions/782621/difference-between-variation-of-calculus-problems-and-control-theory-problems}{ref} for this, also wiki). 
+\item Emulator serves a necessary function of smoothing data (purely from $\eta$ in this model, right? Spectrum?) but done ad hoc. Does enKF break on multimodal distributions?
 
-Switch notation. Control theory only fixes initial endpoint (just adding additional bookkeeping for optimization over final BC, right?). Also deals with differential constraints, so introduce $u$ as a multiplier for $\dot{x}$ and you'd say
-\begin{align*}
-\min_{u} \mcal{S}[u] &= \min_{u}\left\{ \Phi[x(T)] + \int_{0}^{T} dt \, \mcal{F}[t, x(t), u(t)] \right\}, \\
-\dot{x} &= g[t, x(t), u(t)].
-\end{align*}
-where the second equation (first-order dynamic constraints) is called the ``state equation'' and $\Phi$ is the ``endpoint cost.'' Can also have ``path constraints'' on $x$, $u$ (no derivatives).
+\item Calibrate $\rightarrow$ enKF $\rightarrow$ PI control a la Kappen? Or ``smoothing'' = Sample? Want RL agent to plan model evaluations; smoothing then done offline.
 
-\emph{Pontryagin's Maximum Principle} just buys us the ability to deal with discontinuity? Replace $\delta \mcal{H} = 0$ condition with simple $\max \mcal{H}$?
+\item Can we do anything clever with FDT or differentiation with respect to $\theta$s to estimate $\cov(\widehat{y}, \theta)$? Or $\theta$ dependence given GP kernel?
+\end{itemize}
+\end{notebox}
 
+\section{Second batch}
 
+\section{Third batch}
 
-\subsection{Path integral control}
-Ref: \cite{TheodorouEtAl:10}.
+\subsection{Normalizing flows for inverse inference}
+\subsection{Liu-Wang '16}
+\subsection{Marzouk ATM algorithm}
+\subsection{SNPLA}
+\subsection{SNPE-C}
+Ref: Greenberg '19
 
-Finite horizon stochastic control. Make assumption that dynamics \emph{linear} in $u_{t}$, reward is \emph{quadratic} in $u_{t}$:
-\be
-\dot{x}_{t} = f(x_{t},t) + g(x_{t})[u_{t} + dw_{t}]; \qquad r_{t} = q(x_{t},t) + \frac{1}{2} u_{t}^{T}R u_{t},
-\ee
-where Gaussian noise $dw$ has variance $\Sigma_{w}$. HJB equation for cost-to-go is then
-\be
--\partial_{t} J(x_{t}, t) = \min_{u} \left[ r_{t} + (\partial_{x} J)^{T} (f_{t} + g_{t}u_{t}) + \frac{1}{2} \Tr g_{t} \Sigma_{w} g_{t}^{T} \right],
-\ee
-which is solved by
-\be
-u^{\ast}(x_{t}) = -R^{-1} g_{t}^{T} \partial_{x} J.
-\ee
-Substituting this back into HJB gives a nonlinear PDE for $J$, which may be linearized by the change of variables $J = - \lambda \log \Psi(x_{t}, t)$. \marginnote{How does this relate to Schrodinger/physical notions? $\lambda$ like $\hbar$...} 
+Problem: after first $\{x, \theta\}$ samples, want to update our proposal, \emph{but} if we don't use prior, we don't learn the real posterior.
 
-Crucial point for this method: We need to assume $\lambda R^{-1} = \Sigma_{w}$, which is expressing the observation that variance of the control input and cost of that input are inversely related. (This is dictated by the need for linearization and isn't a well-motivated assumption in general: it implies that noiseless variables can't be controlled [and vice versa?]).
+\subsection{Contrastive learning}
+Ref: Durkan '20; nothing new on SNPE-C per se.
 
-Under this assumption we get the Chapman-Kolmogorov PDE
-\be
--\partial_{t} \Psi = - \frac{1}{\lambda} q_{t} \Psi + f_{t}^{T} \partial_{x} \Psi + \frac{1}{2} \Tr \, (\partial^{2}_{x} \Psi) g_{t} \Sigma_{w} g_{t}^{T},
-\ee
-with boundary condition $\Psi(t_{F}) = \exp [ - \phi(t_{F}) / \lambda]$. This can be expressed as a path integral using the Feynman-Kac theorem:
-\be
-\Psi( x_i, t_i) = \int \! d\xi \, \exp - \frac{1}{\lambda} \left( \phi(t_{F}) + \int_{t_i}^{t_{F}} \! dt \, q_{t} \right),
-\ee
-where the integration is over all trajectories $\xi$ starting at $x_{i}(t_i).$
+\subsection{SNVI}
+Better likelihood?
 
-Theodorou et al. go on to generalize to the case where $g_{t}$ is state-dependent and partitioned into controlled [$(c)$] and non-controlled degrees of freedom. Define generalized cost
-\begin{align*}
-\widetilde{S}(\xi) &= S(\xi) + \frac{\lambda}{2} \int_{t_i}^{t_{F}} \! dt \, \log |H(t_{j})|, \text{ where} \\
-S(\xi) &= \phi(t_{F}) + \int_{t_i}^{t_{F}} \! dt \, \left( q_{t} + || \dot{x}^{(c)}_{t} - f^{(c)}_{t} ||^{2}_{H_{t}^{-1}} \right); \\
-H_{t} &= g^{(c)}_{t} R^{-1}g^{(c) T}_{t}.
-\end{align*}
-$\widetilde{S}(\xi)/\lambda$, normalized by the associated partition function $\widetilde{Z}$, is the path integral probability measure for the path $\xi$. \marginnote{How does this compare to e.g. MSR for the uncontrolled Langevin dynamics? What would diagrams look like?} The optimal control can be written as an expectation with respect to it: 
-\be
-u^{\ast} = \frac{1}{\widetilde{Z}} \int \! d\xi \, e^{-\frac{\widetilde{S}}{\lambda}} R^{-1} g^{(c) T}_{t} H_{t}^{-1} \left[ g^{(c)}_{t} dw_{t} - \frac{\lambda}{2} H_{t} \Tr \, (H_{t}^{-1} \partial_{x} H_{t}) \right].
-\ee 
+\subsection{Active learning for SNPE-C/SNVI}
+
+\subsection{Blau '22}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
