@@ -44,7 +44,7 @@ total={5.75in, 9in},left=0.75in,marginparwidth=1.25in]{geometry}
 % Draw box around projects
 \usepackage{framed}
 \theoremstyle{plain}% default
-\newtheorem{notethm}{Speculation}
+\newtheorem{notethm}{Remark}
 \newenvironment{notebox}
     {\noindent\colorlet{shadecolor}{cyan!15}\begin{shaded}\begin{notethm}}
     {\end{notethm}\end{shaded}}
@@ -405,6 +405,7 @@ Also retain critical feature that $s_{+}$ ``depends only on $s$,'' \marginnote{M
 
 Note this is a bit orthogonal to traditional ML: ``semi-supervised'' learning in that we learn reward, but it's up to the agent to determine how to relate that to policy. Also learning problems in general either omit feedback (offline) or tend to leave it implicit in the online case.
 
+
 \section{Monte Carlo} 
 
 \subsection{Intro} Ref: \cite{MacKay:03} ch. 29.
@@ -509,8 +510,89 @@ Above assumes that we're taking expectation of things that are smooth. What if w
 [...]
 
 
+\section{Kernel methods}
+
+\subsection{Kernel trick}
+
+Want to apply linear techniques in nonlinear situations. Assume we can do so by mapping configurations $\mbf{x}$ to a higher (possibly infinite)-dimensional feature space $\varphi(\mbf{x})$; $\varphi$ will be nonlinear.
+
+Because we want to use linear methods in the feature space, it will usually be the case that $\varphi$ will only enter in the form of a kernel, or Gram matrix of known samples:
+\be
+K(\mbf{x}, \mbf{y}) \equiv \langle \varphi(\mbf{x}), \varphi(\mbf{x}) \rangle; \qquad K_{ij} = K(\mbf{x}_{i}, \mbf{x}_{j}).
+\ee
+The ``kernel trick'' is that by working in terms of positive semi-definite $K(\mbf{x}, \mbf{y})$, we don't need to explicitly design, compute or store the feature map $\varphi(\mbf{x})$. 
+
+Example: classification; want a hyperplane separating two classes in feature space, which corresponds to a curved (but still sharp) class boundary in configuration space.
 
 
+
+
+\subsection{Kernel mean embedding of distributions}
+
+\subsubsection{Reproducing kernel Hilbert spaces}
+
+``Reproducing'' here refers to the evaluation map (``evaluate $f$ at $x$''); one-to-one with existence of kernel via $\langle f, K(\mbf{x}, \cdot) \rangle = f(\mbf{x})$. Hilbert spaces that aren't RKHS are somewhat contrived.
+
+\href{https://en.wikipedia.org/wiki/Representer_theorem}{Representer theorems} state that RKHS representation is useful for generalized forms of ridge regression. Min-error $f$ takes the form of a linear combination of $K(x_{i}, \cdot)$. 
+
+
+\subsubsection{Kernel embedding}
+
+Closely analogous. For a random variable $X \sim P$ and a given kernel $K$, the mean embedding is
+\be
+\mu_{X} = \mbb{E}\left[ K(X, \cdot) \right] = \int \!dx \,  p(x)\varphi(x).
+\ee
+We then get the expectation of any function via $ \mbb{E}\left[f(X) \right] = \langle f, \mu_{X} \rangle$. Hope that embedding $\varphi(X)$ captures sufficient statistics about $X$. 
+
+Empirical/sample estimator just $\widehat{\mu}_{X} = \tfrac{1}{N} \sum \varphi(x_{i})$. Can show that convergence is $\sim 1/\sqrt{N}$, independent of the feature space dimensionality, so in this sense these methods get around the curse of dimensionality. 
+
+Joint distribution of $X,Y$ as $C_{XY} = \mbb{E}\left[\varphi(X) \otimes \varphi(Y) \right]$. 
+
+Conditional distributions: let $C_{Y|X} = C_{YX}^{\phantom{-1}} C_{XX}^{-1}$. Assuming existence, conditional embedding is a series of feature vectors indexed by $x$:
+\be
+\mu_{Y|X=x} = C_{Y|X} \varphi(x) = \int \! dy \, p(y|x)\varphi(y).
+\ee
+
+\subsubsection{Induced properties}
+
+Norm on RKHS gives us a notion of ``distance'' between distributions\marginnote{Asymmetry of $D_{KL}$ means probably impossible to choose $\varphi$ to reproduce info-th metrics, right?}, the maximum mean discrepancy
+\be
+\text{MMD}(P_{X}, P_{Y}) = || \mu_{X} - \mu_{Y} ||^{2} = \sup_{||f|| \leq 1} \mbb{E} \left[ f(X) \right] -  \mbb{E} \left[ f(Y) \right].
+\ee
+
+Likewise, measure of dependence/correlation
+\be
+\text{HSIC}(X,Y) = || C_{XY} - \mu_{X} \otimes \mu_{Y} ||^{2}.
+\ee
+
+
+\begin{notebox}
+How does this improve over Monte Carlo? Presumably on strength of kernel embedding. To what extent do we need to know $\varphi$ explicitly for encoding/decoding, though?
+
+\end{notebox}
+
+
+\section{Kernel approximations}
+Computationally tractable implementations of kernel methods basically boil down to dense matrix operations; for large data applications these are too slow, and we instead want to use reduced-rank approximations.
+
+\subsection{Random features}
+``Random'' in the sense that we regard ``feature space'' as being indexed by a random variable $\theta$; 
+\be
+K(x, x') = \int \! d\theta \, p(\theta) \varphi_{\theta}(x) \varphi_{\theta}(x').
+\ee
+In computations we use a Monte Carlo approximation of this integral by $M$ samples of $\theta$.
+
+Question then arises of how to choose $\varphi_{\theta}$ to reproduce known kernel $K$. Partial answer for translation-invariant $K$ from 
+
+\subsubsection{Random Fourier features}
+Question then arises of how to choose $\varphi_{\theta}$ to reproduce known kernel $K$. Partial answer for translation-invariant $K$ from Bochner's theorem: take $\varphi_{a,b}(x) \propto \cos(a^{T}x + b)$, with $b$ uniform on $[0, 2\pi)$ and $a$ taken from an $N$-dimensional distribution. 
+
+$a \sim$ Gaussian reproduces the RBF kernel; $a \sim t$-distribution reproduces the Matern(1/2) kernel (in limit $M \to \infty$).
+
+
+\subsection{Gamblets}
+
+\subsection{Neural networks}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{The linear-Gaussian world}
@@ -633,58 +715,126 @@ Versus directed polymer in random medium? At fixed $\mbf{u}(\mbf{x},t)$, assume 
 \end{notebox}
 
 
-\subsection{Linear/LQG optimal control.}
+\subsection{Linear-Quadratic regulator}
 
-Ref: blog posts at \href{http://www.argmin.net/2018/06/25/outsider-rl/}{argmin.net/2018/06/25/outsider-rl/}, specifically \href{http://www.argmin.net/2018/02/08/lqr/}{third one}.
+Ref: \href{https://en.wikipedia.org/wiki/Linear\%E2\%80\%93quadratic_regulator}{wiki}; \href{http://www.argmin.net/2018/02/08/lqr/}{this blog post}; first chapter of Bertsekas.
 
-System state $x_{t}$, control action $u_{t}$, noise $e_{t}$. For simplicity, drop $t$ subscript and write, e.g., $x_{+} \equiv x_{t+1}$. Maximize expected reward
+\subsubsection{Notation}
+
+Simplest model of a linear feedback controller. Turn off noise for this section; system state $\mbf{x}_{t}$, control action $\mbf{u}_{t}$, time $t$ taken discrete. Start with finite-horizon; $t \in [0, T+1]$.
+
+Take dynamics to be deterministic, linear and exactly known:
+\begin{equation}
+\label{eq-lqr-eom}
+\mbf{x}_{t+1} = f(\mbf{x}_{t}, \mbf{u}_{t}) = \mbf{A}\mbf{x}_{t} + \mbf{B}\mbf{u}_{t},
+\end{equation}
+with boundary condition $\mbf{x}_{0}$. We want to find the control trajectory $\mbf{u}^{\ast}_{t}$ which is optimal in the sense of minimizing cost, assumed quadratic:
 \be
-\arg \max_{u} \left\langle \sum_{t} R(x,u) \right\rangle_{e}
+G = \sum_{t} g(\mbf{x}_{t}, \mbf{u}_{t}) = \tfrac{1}{2} \mbf{x}^{T}_{T+1} \mbf{\Psi} \mbf{x}_{T+1} + \sum_{t=0}^{T} \tfrac{1}{2} \mbf{x}^{T}_{t} \mbf{Q} \mbf{x}_{t} + \tfrac{1}{2} \mbf{u}^{T}_{t} \mbf{R} \mbf{u}_{t}. 
 \ee
-for known $R$, subject to known \emph{linear} dynamics
-\be
-x_{t+1} = f(x_{t}, u_{t}, e_{t}) = Ax + Bu + e.
-\ee
-Linearity means zero-mean, IID noise may be absorbed into a change of variable: $\mtilde{x}_{t} = x_{t} - e_{t-1}$. Then $\left\langle \mtilde{x} Q \mtilde{x} \right\rangle_{e} = xQx + \left\langle e Q e \right\rangle_{e}$. Maybe better to assume noiseless, then show adding noise doesn't create substantial problems: Achievable \emph{reward} degrades, but the optimal control signal $u$ is identical to the noiseless case.
+Drop possible $\mbf{x}-\mbf{u}$ cross term in above in the name of simplicity; for the same reason matrices could be $t$-dependent, but we suppress this. Crunch through solution first, then return to question of what conditions we need on all these matrices. 
 
-The \emph{linear quadratic regulator} is the case where $R$ is quadratic (with no cross terms --- generic change of variable?):
-\be
-R(x,u) = \left.\frac{1}{2} xSx\right|_{t=N+1} + \frac{1}{2} \sum_{t=0}^{N} xQx + uRu.
-\ee
-\marginnote{TODO: relate this to generic KKT block form.}
+\subsubsection{Via dynamic programming (Bellman)}
 
-Find optimality at extrema of Lagrangian. Impose dynamics though Lagrange multipliers (``costates'' or ``adjoints'') $p_{t}$: $\mcal{L} = R(x,u) - p(x_{+} - Ax - Bu)$. Then we have
+``Bellman optimality principle,'' and starting point for applicability of dynamic programming, is that sub-trajectory of an optimal trajectory is itself optimal (assuming convexity, or more broadly absence of \emph{topological} obstructions).
+
+Define ``cost-to-go'' $J_{t}(\mbf{x}_{t})$ as cost of sub-trajectory on $[t,T+1]$, starting from initial condition $\mbf{x}_{t}$. Careful on notation: $J_{t}$ has time dependence beyond that from $\mbf{x}_{t}$; also implicit dependence on rest of trajectory of $\mbf{x}, \mbf{u}$.
+
+\emph{Optimal} cost-to-go refers to optimizing with respect to $\mbf{u}_{t}$. This is done \emph{backwards} in time:
+\begin{equation}
+\label{eq-lqr-bell1}
+J^{\ast}_{t}(\mbf{x}_{t}) = \min_{\mbf{u}_{t}} \left[ g(\mbf{x}_{t}, \mbf{u}_{t}) + J^{\ast}_{t+1}\left( f(\mbf{x}_{t}, \mbf{u}_{t}) \right) \right]
+\end{equation}
+``Arrow of time'' fixed by need to substitute $f(\mbf{x}_{t}, \mbf{u}_{t})$ for $\mbf{x}_{t+1}$. Boundary condition is set in future, at $T+1$, because no control action in last step.
+
+So $J^{\ast}_{t}(\mbf{x}_{t})$ is like a time-dependent \emph{potential}: need to maintain $\mbf{x}_{t}$ as a free variable when solving. Need to retain full functional dependence essentially the main obstacle with reinforcement learning, and motivation for introducing approximation methods.
+
+
+Boundary condition is $J^{\ast}_{T+1}(\mbf{x}_{T+1}) = \tfrac{1}{2} \mbf{x}^{T}_{T+1} \mbf{\Psi} \mbf{x}_{T+1}$; we take this as an ansatz and show that if we have $J^{\ast}_{t+1}(\mbf{x}_{t+1}) = \tfrac{1}{2} \mbf{x}^{T}_{t+1} \mbf{M}_{t+1} \mbf{x}_{t+1}$ for some matrix $ \mbf{M}_{t+1}$, this form will be preserved under the backwards recursion, i.e. it implies $J^{\ast}_{t}(\mbf{x}_{t}) = \tfrac{1}{2} \mbf{x}^{T}_{t} \mbf{M}_{t} \mbf{x}_{t}$ for some other $\mbf{M}_{t}$.
+
+Variation with respect to $\mbf{u}_{t}$ in \eqref{eq-lqr-bell1} gives
+\be
+0 = \mbf{R} \mbf{u}^{\ast}_{t} + \mbf{B}^{T} \mbf{M}_{t+1} \mbf{A} \mbf{x}_{t} + \mbf{B}^{T} \mbf{M}_{t+1} \mbf{B} \mbf{u}^{\ast}_{t},
+\ee
+so
+\be
+\mbf{u}^{\ast}_{t} = - \left[ \mbf{R} + \mbf{B}^{T} \mbf{M}_{t+1} \mbf{B} \right]^{-1} \mbf{B}^{T} \mbf{M}_{t+1} \mbf{A} \mbf{x}_{t} \equiv - \mbf{K}_{t+1} \mbf{x}_{t}.
+\ee
+This lets us eliminate $\mbf{u}_{t}$ in favor of $\mbf{x}_{t}$ on the RHS of \eqref{eq-lqr-bell1}, so we can see that the ansatz for the form of $J_{t}$ is preserved. Explicitly,
+\be
+\mbf{M}_{t} = \mbf{Q} + \mbf{A}^{T} \mbf{M}_{t+1} \mbf{A} + \mbf{K}^{T}_{t+1} \left[ \mbf{R} +  \mbf{B}^{T} \mbf{M}_{t+1} \mbf{B} \right] \mbf{K}_{t+1} - \left( \mbf{A}^{T} \mbf{M}_{t+1} \mbf{B} \mbf{K}_{t+1} + \mbf{K}_{t+1}^{T} \mbf{B}^{T} \mbf{M}_{t+1} \mbf{A}  \right),
+\ee
+but expanding the third term shows that it's equal to half the term in parentheses, so we obtain the discrete-time algebraic Riccati equation:
+\begin{equation}
+\label{eq-lqr-dare}
+\mbf{M}_{t} = \mbf{Q} + \mbf{A}^{T} \mbf{M}_{t+1} \mbf{A} -  \mbf{A}^{T} \mbf{M}_{t+1} \mbf{B}\left[ \mbf{R} +  \mbf{B}^{T} \mbf{M}_{t+1} \mbf{B} \right]^{-1} \mbf{B}^{T} \mbf{M}_{t+1} \mbf{A}.
+\end{equation}
+If we make the further assumption that $\mbf{M}$ is invertible, we can apply the \href{https://en.wikipedia.org/wiki/Woodbury_matrix_identity}{Woodbury identity}
+\be
+\left[ \mbf{A} + \mbf{U}^{T} \mbf{C} \mbf{U} \right]^{-1} = \mbf{A}^{-1} - \mbf{A}^{-1}\mbf{U}^{T} \left[ \mbf{C}^{-1} + \mbf{U} \mbf{A}^{-1} \mbf{U}^{T} \right]^{-1} \mbf{U} \mbf{A}^{-1}
+\ee
+to obtain
+\begin{equation}
+\label{eq-lqr-dare2}
+\mbf{M}_{t} = \mbf{Q} + \mbf{A}^{T}\left[  \mbf{M}_{t+1}^{-1} + \mbf{B} \mbf{R}^{-1}\mbf{B}^{T} \right]^{-1} \mbf{A}.
+\end{equation}
+
+
+
+\subsubsection{Via Pontryagin maximum principle}
+
+Constrain dynamics to be physical\marginnote{cf. on-shell vs. off-shell when we move to path integral?} though Lagrange multipliers (``costates'' or ``adjoints'') $\mbf{\lambda}_{t}$: $L = G - \mbf{\lambda}_{t+1}^{T}(\mbf{x}_{t+1} - \mbf{A}\mbf{x}_{t} - \mbf{B}\mbf{u}_{t} )$. Find optimality at extrema of Lagrangian; we have
 \begin{align}
-\label{lag1} 0 = \delta_{x}\mcal{L} &= Qx - p + A^{T}p_{+}, \\
-\label{lag2} 0 = \left.\delta_{x}\mcal{L}\right|_{t=N+1} &=  - p_{N+1}+ Sx_{N+1}, \\
-\label{lag3} 0 = \delta_{u}\mcal{L} &= Ru - p + B^{T}p_{+}, \\
-\label{lag4} 0 = \delta_{p}\mcal{L} &= x - Ax_{-} - B u_{-}.
+\label{eq-lqr-lag1} \text{\href{https://en.wikipedia.org/wiki/Costate_equation}{Costate equation: }} 0 &= \frac{\delta L}{\delta \mbf{x}_{t}} \Rightarrow \mbf{\lambda}_{t} = \mbf{A}^{T} \mbf{\lambda}_{t+1} + \mbf{Q} \mbf{x}_{t}, \\
+\label{eq-lqr-lag2} \text{Boundary condition: } 0 &= \frac{\delta L}{\delta \mbf{x}_{T+1}} \Rightarrow \mbf{\lambda}_{T+1} = \Psi \mbf{x}_{T+1}, \\
+\label{eq-lqr-lag3} \text{Stationary equation: } 0 &= \frac{\delta L}{\delta \mbf{u}_{t}} \Rightarrow \mbf{u}_{t} = - \mbf{R}^{-1} \mbf{B}^{T} \mbf{\lambda}_{t+1}, \\
+\label{eq-lqr-lag4} \text{State equation: } 0 &= \frac{\delta L}{\delta \mbf{\lambda}_{t}} \Rightarrow \mbf{x}_{t+1} = \mbf{A}\mbf{x}_{t} + \mbf{B}\mbf{u}_{t}.
 \end{align}
-Start at $t=N+1$ and work backwards. \eqref{lag2} gives $p_{N+1}$ directly from $x_{N+1}$. Use this to eliminate $p_{+}$ from \eqref{lag3}, and insert into EOM \eqref{lag4} to obtain
-\begin{align*}
-[R + B^{T}SB]u_{N} = - B^{T}SAx_{N}; \qquad u_{N} &= -K[S] x_{N}. \\
-\text{with } K[M] &= [R + B^{T} M B]^{-1}B^{T} M A.
-\end{align*}
-We see that, generally, if $p_{+} = M_{+} x_{+}$ for some $M_{+}$, then 
-\be
-\label{lag5} u = -K[M_{+}] x.
-\ee
-We show that this property is conserved: if  $p_{+} = M_{+} x_{+}$, there exists an $M$ such that $p = M x$. Use the assumption to eliminate $p_{+}$ in \eqref{lag1}, then use the EOM \eqref{lag4} to eliminate $x_{+}$ and finally \eqref{lag5} to eliminate $u$. Obtain
-\be
-p = [ A^{T}M_{+} (A- B K[M_{+}]) + Q] x,
-\ee
-or 
-\be
-\label{lag6} M = Q + A^{T} M_{+}A - (A^{T}M_{+}B)(R+B^{T}M_{+}B)^{-1}(B^{T}MA).
-\ee
-The solution strategy therefore has two stages: 1) run \eqref{lag6} backwards in time to obtain $\{M_{t}\}$, then run \eqref{lag5} forward in time to obtain the optimal $u$, $x$ (from EOM).
 
-Under an infinite time horizon, assume $M_{+} = M$. Fixed-point form of \eqref{lag6} is a ``discrete algebraic Ricatti equation.''
 
-Dynamic programming form of the above: truncate problem at horizon $K < N$ and try to find an $S_{K+1}$ such that the optimal $u,x$ in the truncated problem are identical to the truncation of $x,u$ found in the full-horizon problem. Claim this takes the form
+Similar to previous section, we find the costate equation describes evolution of $\lambda_{t}$ backwards in time from a boundary condition at $T+1$. 
+
+Stationary equation \eqref{eq-lqr-lag3} can viewed as (related to?) a Legendre transform, exchanging $\mbf{u}$ for $\lambda$ as dependent variable. Eliminating $\mbf{u}_{t}$ from \eqref{eq-lqr-lag1}, \eqref{eq-lqr-lag4} gives joint recursion
 \be
-S[x] = \min_{u} xQx + uRu + (Ax + Bu)^{T} M_{+} (Ax+Bu).
+\begin{pmatrix} \mbf{x}_{t+1}  \\ \lambda_{t} \end{pmatrix} = \left[ \begin{matrix} \mbf{A} & - \mbf{B} \mbf{R}^{-1} \mbf{B}^{T} \\ \mbf{Q} & \mbf{A}^{T} \end{matrix} \right] \begin{pmatrix} \mbf{x}_{t}  \\ \lambda_{t+1} \end{pmatrix}.
 \ee
+
+Solution proceeds similarly, taking boundary condition as ansatz, and showing that if $\lambda_{t+1} = \mbf{M}_{t+1} \mbf{x}_{t+1}$ for some $\mbf{M}_{t+1}$, this dependence is preserved. Use notation $\mbf{M}$ because we obtain same discrete-time Riccati equation as above.
+
+\begin{notebox}
+Is there something deeper going on here? A priori, could say that $\lambda_{t}$ depends on future trajectory of $\mbf{x}$s, while $\mbf{x}_{t}$ depends on history of $\mbf{x}$s, so ``intersection'' is to have $\lambda_{t}$ and $\mbf{x}_{t}$ depend on each other only at that value of $t$.
+\end{notebox}
+
+Substituting in ansatz, we get
+\be
+\mbf{x}_{t+1} = \left[ 1 + \mbf{B} \mbf{R}^{-1} \mbf{B}^{T} \mbf{M}_{t+1} \right]^{-1} \mbf{A} \mbf{x}_{t},
+\ee
+so
+\be
+\lambda_{t} = \left\{ \mbf{Q} + \mbf{A}^{T} \mbf{M}_{t+1}\left[ 1 + \mbf{B} \mbf{R}^{-1} \mbf{B}^{T} \mbf{M}_{t+1} \right]^{-1} \mbf{A} \right\} \mbf{x}_{t}
+\ee
+Quantity in curly brackets is $\mbf{M}_{t}$; inserting $1 = \mbf{M}_{t+1}^{-1} \mbf{M}_{t+1}$ gives us the discrete-time Riccati equation in the form \eqref{eq-lqr-dare2}.
+
+
+\begin{notebox}
+Relationship to Bellman? Write up relationship between Pontryagin and HJB. Is this a substantive change in what we're solving for --- i.e. can we take $\lambda_{t}$ to be a field, or is it indirect bookkeeping for the potential $J^{\ast}_{t} (\mbf{x}_{t})$ --- seems like we need to retain $\mbf{x}_{t}$-dependence, as with form of ansatz.
+
+Are we just doing $\lambda_{t} = \delta_{\mbf{x}_{t}} J^{\ast}_{t} (\mbf{x}_{t})$?
+\end{notebox}
+
+
+\subsubsection{Infinite-horizon problems}
+
+For $T \rightarrow \infty$, physical solutions to the above are steady states, so fixed points of the Riccatti equation $\mbf{M}_{t+1} = \mbf{M}_{t} = \mbf{M}$.
+
+
+
+
+
+\subsection{Linear-Quadratic control with Gaussian noise}
+[...]
+
+Linearity means zero-mean, IID noise may be absorbed into a change of variable: $\mtilde{x}_{t} = x_{t} - e_{t-1}$. Then $\left\langle \mtilde{x} Q \mtilde{x} \right\rangle_{e} = xQx + \left\langle e Q e \right\rangle_{e}$. Maybe better to assume noiseless, then show adding noise doesn't create substantial problems: Achievable \emph{reward} degrades, but the optimal control signal $u$ is identical to the noiseless case.
 
 
 \subsection{Control vs. ML}
