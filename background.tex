@@ -1371,6 +1371,142 @@ Better likelihood?
 \subsection{Blau '22}
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Applications}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Data assimilation}
+
+
+\section{Portfolio theory}
+
+\subsection{Motivation: betting strategies.}
+
+\subsubsection{Kelly criterion} \cite{CoverThomas:91} chapter 6; Kelly 1956.
+
+Let $I$ be a discrete random variable representing the winner of a horse race. Horse $i$ has probability $p_{i}$ to win; assume a bookmaker offers odds $1/q_{i}$ on this horse. For now assume the odds are ``fair'' in that $\sum_{i} q_{i} = 1$; more realistic is ``subfair'' odds $\sum_{i} q_{i} > 1$, where the house always takes a cut. A gambler bets a fraction $f_{i}$ of their bankroll on horse $i$; $\sum f_{i} = 1$. The relative payoff is $f_{i}/q_{i}$ if $i$ wins, otherwise $0$. 
+
+For a single race, we might want to put everything on the bet with the largest expected payoff $\langle 1/q_{i} \rangle_{p}$, although this carries a large chance of being wiped out completely. To quantify risk, we instead consider the setting of maximizing terminal wealth after a series of repeated races. Treating the wealth $V_{n}$ after $n$ races as a stochastic variable, 
+\be
+V_n (I_{1}, I_{2}, \ldots, I_{n}) = V_{0} \prod_{t=1}^{n} \frac{f_{i,t}}{q_{i,t}};
+\ee
+(assume probabilities and odds remain constant). We've assumed race outcomes $\{I_{1}, I_{2}, \ldots, I_{n} \}$ are iid $\sim p(x)$. The product structure, which arises simply due to the fact that we can reinvest our previous winnings, means that $\{ \log f_{i,t}/q_{i,t} \}_{t}$ are also statistically independent. Then invoke the weak law of large numbers [i.e., for large $n$ outcome $i$ will happen $np_{i}$ times] to deduce that \marginnote{Understand terms of this statement better: ``convergence in probability.''}
+\be
+\frac{1}{n} \log V_{n} \underset{p}{\longrightarrow} \left\langle \log \frac{f_{i}}{q_{i}} \right\rangle_{p} = \left\langle \log \frac{f_{i}}{p_{i}} \frac{p_{i}}{q_{i}} \right\rangle_{p} = D_{KL}(p|q) - D_{KL}(p|f), 
+\ee
+expressed in terms of KL divergences. Terminal wealth grows exponentially with $n$ as $\langle \log f_{i}/q_{i} \rangle_{p}$, and this latter quantity is what we want to maximize. Include a lagrange multiplier $\lambda$ enforcing $\sum_{i} f_{i}$ = 1, then 
+\be
+\arg \max_{f} \left[ \langle \log f_{i}/q_{i} \rangle_{p} + \lambda \sum_{i} f_{i} \right] \Rightarrow f^{\ast}_{i} = - \frac{p_{i}}{\lambda^{\ast}} = p_{i},
+\ee
+with the optimal growth rate
+\be
+W^{\ast}[I] = \left\langle \log \frac{f^{\ast}_{i}}{q_{i}} \right\rangle_{p} = - \langle \log q_{i} \rangle_{p} - H[I].
+\ee
+This is Kelly's result (``proportional gambling.'') Returning to the KL divergence interpretation, we can only make money (again, in the large-$n$ sense) if our estimate of the true distribution $p$, as expressed through our bets $f$, is closer in the KL sense than the bookmaker's estimate $q$.
+
+
+\subsubsection{Side information in the horse race.} Same assumptions as above, but we want to condition our strategy on an arbitrary stochastic variable $Y$. 
+
+Formally, need only replace $p_{i} \rightarrow p(i, y)$ and $f_{i} \rightarrow f(i|y)$ in the derivation above; now have conditioned growth rate
+\be
+W^{\ast}[I|Y] = \sum_{i,y} p(i,y) \log \frac{f^{\ast}(i|y)}{q_{i}} = - \langle \log q_{i} \rangle_{p} - H[I|Y].
+\ee
+This is still optimized by $f^{\ast}(i|y) = p(i|y) = p(i,y)/p(y)$. 
+
+We see that $W^{\ast}[I|Y] - W^{\ast}[I] = I(I;Y)$: the increase in growth rate provided by knowing $y$ is equal to the mutual information $Y$ provides about the race outcome $I$. In a more realistic portfolio scenario, this is only an upper bound, obtained when the market takes the horse racing form. 
+
+
+\subsubsection{Optimal gambling is optimal coding/compression} Both concern themselves with estimation of the distribution $p$ underlying an iid process $\{I_{1}, I_{2}, \ldots, I_{n} \}$. Made explicit in \cite{CoverThomas:91} 6.5.
+
+[...]
+
+
+\subsubsection{Observations on Kelly}
+ 
+\begin{itemize}
+\item The above criteria don't tell us how to find an edge, only how to best exploit it once it's identified. If the bookmaker offers perfect odds $q(x) = p(x)$, the optimal solution is not to bet at all [after first extending the scenario to include this option; optimal $f^{\ast}$ in this case now depends on the offered odds $1/q(x)$].
+
+\item We assumed stationarity across different races, duh.
+
+\item It may take an infeasibly long time to reach the asymptotic growth regime. You might not be able to find enough opportunities with edge to make it into this regime.
+
+\item \emph{Opportunity costs}: the Kelly fraction for an asset can only be calculated with reference to the entire universe of opportunities. ``Common error,'' since it leads to overestimating the fraction, and Kelly is generally the most concentrated it makes sense to be [Thorp 08].
+\end{itemize}
+
+
+
+\subsection{Optimal portfolios.}
+
+\subsubsection{Kelly criterion in the portfolio context}
+
+The horse race may be viewed as a specialized case of the general portfolio allocation problem (in which ``returns'' are only accumulated for one period with a winner-take-all structure.)
+
+[...]
+
+The above considerations suggest maximizing $\langle \log r \rangle$. This is at odds with classical portfolio theory due to Markowitz, which regards the allocation question as a tradeoff between risk and expected return. \marginnote{BUT log-optimal reduces to mean-variance in a limit [which?]} 
+
+Properties of the log-optimal portfolio [in MacLean et al 11]:
+\begin{itemize}
+\item Log utility maximizes asymptotic growth; it's \emph{myopic}/greedy in the sense that maximization period-by-period (independent of history) yields the global maximum [Kelly 56]. 
+\item The ratio of a log-optimal portfolio to any ``essentially different'' strategy (must differ from it an extensive fraction of the time, but this is not sufficient; this is subtle. See [Thorp 08].) grows asymptotically without bound. The log-optimal portfolio minimizes the expected time to reach a value threshold. [Breiman 61].
+\item For arbitrary return distribution, log-optimality maximizes asymptotic growth rate [Algolet and Cover 88].
+\item The log-optimal portfolio is always on the geometric mean-variance frontier (geometric rather than arithmetic means are appropriate for the multi-period setting). Arithmetic MV-efficient porfolios are generally not geometrically efficient, and vice versa [Thorp 71].
+\item Log utility is myopic for general return distributions [Hakansson 71].
+\end{itemize}
+
+
+\subsubsection{Growth-optimal portfolios} \cite{CoverThomas:91} ch. 16; \cite{Cesa-BianchiLugosi:06} ch. 10.
+
+
+In an iterated context, the principle underlying Cover's universal portfolio is \emph{volatility harvesting}, an essentially mean-reverting strategy (if only because volatility, by itself, has no drift by definition). As a minimal example, consider two assets, one of which remains constant in value and the other of which oscillates at a fixed frequency. If our portfolio is \emph{constantly rebalanced} to maintain a constant ratio of value between the two assets, we sell the oscillating asset at its highs and buy it at its lows.
+
+This is independent of a choice of the stochastic process generating the returns. 
+
+This is infeasible in practice, because ``volatility'' is a high-frequency phenomenon, so this would require high volatility \marginnote{What about multiply-leveraged ETFs?} and infeasibly frequent rebalancing. It would fall short in 
+
+[...]
+
+[ what's the relationship between Cover and Kelly?]
+
+Claim for the Cover portfolio is that asymptotic performance is equal to the best constant [wealth fraction] rebalanced portfolio, chosen in hindsight (i.e., with access to future price series.)
+
+
+
+\subsection{Control/RL for the trading problem.} 
+
+Trading as the full problem, including execution/timing, as opposed to portfolio optimization.
+
+As described above, impact of Kelly is just to use $\langle \log r \rangle$ as the objective in the control problem. Non-linear reward means Bellman recursion is non-linear; rules out some algorithms.
+
+\subsubsection{Framing the problem.} 
+
+Ideally we'd like a hierarchy of approximations, which could be expressed perturbatively in respective algorithms.
+\begin{enumerate}
+\item Roughest to assume zero impact: this is would be MDP where state is \{prices, holdings\}, and control inputs (policy actions; trades) only affect the latter.
+\item Could then add a rough slippage/impact model to let trades affect prices directly.
+\item Next step would be to add estimation of the parameters of the stochastic process underlying prices to control.
+\item Ditto for parameters of slippage model.
+
+\end{enumerate}
+
+Remark that vanilla RL addresses the case where the reward function is unknown and can only be determined through active exploration. Neither of these assumptions apply to trading in the regimes we'd want to be active in: 
+\begin{itemize}
+\item Prices are transparent and we can mark-to-market at any time. This breaks down when assets are hard to value (through not only illiquidity but non-standardization: say real estate or residential MBSes).
+\item Again due to price transparency, we can backtesting a hypothetical strategy straightforwardly. This breaks down in situations of high slippage/impact (illiquidity), closer to a multi-armed bandit problem in which we can only use the information of market impact from our previous trades.
+\end{itemize}
+
+See \cite{BoydEtAl:17} for implementation of the MDP problem.
+
+Refer to sec.~\boldref{sec-control-vs-ml}. 
+\begin{itemize}
+\item POMDP $\rightarrow$ belief MDP. Kelly (or rather, its Bayesian extension) is a deterministic mapping from beliefs to bet sizes (actions).
+\item 
+
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % References
 
